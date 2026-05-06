@@ -1,0 +1,2385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Wellness Journey</title>
+  <link rel="icon" href="data:," />
+  <style>
+    :root {
+      --app-bg: #f4f3f1;
+      --outside-bg: #dcd7d4;
+      --ink: #1f1f1f;
+      --muted: #817b74;
+      --line: #e7e3df;
+      --white: #ffffff;
+      --yellow: #ffbd2e;
+      --green: #8dc8a2;
+      --green-dark: #31754e;
+      --lavender: #d9c4ff;
+      --peach: #ff9d62;
+      --blue: #a8bff5;
+      --rose: #f5a2a0;
+      --cream: #eadfa5;
+      --clay: #c98668;
+      --danger: #a23f35;
+      --shadow: 0 22px 45px rgba(52, 47, 43, 0.18);
+      --soft-shadow: 0 10px 24px rgba(71, 65, 58, 0.07);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      background: var(--outside-bg);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Arial, sans-serif;
+      display: grid;
+      place-items: center;
+      padding: 18px;
+    }
+
+    button, input, select { font: inherit; }
+
+    button {
+      border: 0;
+      cursor: pointer;
+      color: inherit;
+      background: transparent;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button:active { transform: scale(0.98); }
+    button:disabled { cursor: not-allowed; opacity: 0.56; transform: none; }
+
+    h1, h2, h3, p { margin-top: 0; }
+
+    h1 {
+      margin-bottom: 0;
+      font-size: 1.9rem;
+      line-height: 1.05;
+      letter-spacing: 0;
+      font-weight: 850;
+    }
+
+    h2 {
+      margin-bottom: 10px;
+      font-size: 1.22rem;
+      letter-spacing: 0;
+      font-weight: 850;
+    }
+
+    h3 {
+      margin-bottom: 6px;
+      font-size: 1rem;
+      letter-spacing: 0;
+    }
+
+    p {
+      color: var(--muted);
+      line-height: 1.38;
+      font-size: 0.9rem;
+    }
+
+    .device {
+      width: min(100%, 420px);
+      height: min(920px, calc(100vh - 36px));
+      min-height: 720px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      background: var(--app-bg);
+      border-radius: 38px;
+      box-shadow: var(--shadow);
+      position: relative;
+    }
+
+    .statusbar {
+      height: 48px;
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 25px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: #2a2927;
+    }
+
+    .status-icons {
+      display: inline-flex;
+      gap: 5px;
+      font-size: 0.72rem;
+    }
+
+    .screen {
+      flex: 1;
+      overflow: auto;
+      padding: 0 18px 18px;
+      scrollbar-width: none;
+    }
+
+    .screen::-webkit-scrollbar { display: none; }
+
+    .page, .tool-panel { display: none; }
+    .page.active, .tool-panel.active {
+      display: block;
+      animation: pageIn 0.18s ease;
+    }
+
+    @keyframes pageIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .profile-dot {
+      width: 43px;
+      height: 43px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      font-size: 1.35rem;
+      background:
+        radial-gradient(circle at 60% 35%, rgba(255, 255, 255, 0.7), transparent 22%),
+        linear-gradient(135deg, #ffb066, #dd6f54);
+      box-shadow: 0 8px 18px rgba(119, 75, 45, 0.22);
+    }
+
+    .round-btn {
+      width: 43px;
+      height: 43px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: var(--white);
+      color: #34302c;
+      font-size: 1.25rem;
+      font-weight: 850;
+      box-shadow: 0 8px 18px rgba(71, 65, 58, 0.08);
+      flex: 0 0 auto;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 18px 0 10px;
+    }
+
+    .section-head button,
+    .section-head a {
+      color: #69645e;
+      font-size: 0.82rem;
+      font-weight: 850;
+      text-decoration: none;
+    }
+
+    .card,
+    .form-card,
+    .data-card,
+    .support-card,
+    .metric-card,
+    .activity-card,
+    .history-item,
+    .details-card {
+      background: var(--white);
+      box-shadow: var(--soft-shadow);
+    }
+
+    .card,
+    .form-card,
+    .data-card,
+    .support-card,
+    .details-card {
+      border-radius: 26px;
+      padding: 18px;
+      margin-bottom: 13px;
+    }
+
+    .hero-card {
+      min-height: 148px;
+      display: grid;
+      align-content: end;
+      overflow: hidden;
+      color: var(--white);
+      background:
+        linear-gradient(155deg, rgba(49, 117, 78, 0.94), rgba(122, 143, 94, 0.82)),
+        radial-gradient(circle at 78% 24%, rgba(255, 189, 46, 0.8), transparent 30%);
+    }
+
+    .hero-card p { color: rgba(255, 255, 255, 0.76); margin-bottom: 0; }
+
+    .calendar-row {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 7px;
+      margin-bottom: 18px;
+    }
+
+    .day-pill {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.7rem;
+      font-weight: 850;
+    }
+
+    .day-pill span {
+      width: 38px;
+      height: 38px;
+      margin: 6px auto 0;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: var(--white);
+      color: #5e5a55;
+      box-shadow: 0 7px 14px rgba(71, 65, 58, 0.05);
+    }
+
+    .day-pill.active { color: var(--ink); }
+    .day-pill.active span { color: var(--ink); background: var(--yellow); }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .summary-card {
+      min-height: 118px;
+      border-radius: 20px;
+      padding: 14px;
+      text-align: left;
+      background: var(--summary-bg, var(--white));
+      box-shadow: var(--soft-shadow);
+    }
+
+    .summary-card.wide {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .summary-num {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 1.8rem;
+      line-height: 1;
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .summary-card strong { display: block; font-size: 0.92rem; margin-bottom: 4px; }
+    .summary-card small { color: rgba(31, 31, 31, 0.58); font-size: 0.75rem; font-weight: 800; }
+
+    .quick-grid {
+      display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: 146px;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      scrollbar-width: none;
+    }
+
+    .quick-grid::-webkit-scrollbar { display: none; }
+
+    .quick-card {
+      min-height: 132px;
+      border-radius: 17px;
+      padding: 14px;
+      text-align: left;
+      background: var(--quick-bg, #ffd8d2);
+    }
+
+    .quick-card strong { display: block; font-size: 0.86rem; margin-bottom: 7px; }
+    .quick-card p { color: #5f5952; font-size: 0.76rem; min-height: 40px; }
+
+    .pill,
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      border-radius: 999px;
+      padding: 5px 10px;
+      color: #81633f;
+      background: rgba(255, 255, 255, 0.7);
+      font-size: 0.72rem;
+      font-weight: 850;
+    }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(var(--tab-count, 3), 1fr);
+      gap: 0;
+      background: #ede9e5;
+      border-radius: 13px;
+      padding: 4px;
+      margin-bottom: 14px;
+    }
+
+    .tab-btn {
+      min-height: 34px;
+      border-radius: 10px;
+      color: #5f5a55;
+      font-size: 0.74rem;
+      font-weight: 850;
+      white-space: nowrap;
+    }
+
+    .tab-btn.active { background: var(--lavender); color: #3c245e; }
+
+    .field { margin-top: 16px; }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.83rem;
+      color: #5f5954;
+      font-weight: 850;
+    }
+
+    select,
+    input[type="number"],
+    input[type="time"] {
+      width: 100%;
+      border: 0;
+      outline: 0;
+      min-height: 48px;
+      border-radius: 16px;
+      padding: 0 14px;
+      color: var(--ink);
+      background: #f1efec;
+      font-weight: 800;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--yellow);
+    }
+
+    .segmented {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      background: #eeeae5;
+      border-radius: 17px;
+      padding: 5px;
+    }
+
+    .segment {
+      min-height: 40px;
+      border-radius: 13px;
+      color: #77716a;
+      font-size: 0.83rem;
+      font-weight: 850;
+    }
+
+    .segment.active { background: var(--yellow); color: var(--ink); }
+
+    .avatar-row,
+    .mood-grid,
+    .score-grid,
+    .activity-grid,
+    .metric-grid {
+      display: grid;
+      gap: 9px;
+    }
+
+    .avatar-row { grid-template-columns: repeat(5, 1fr); }
+    .mood-grid { grid-template-columns: repeat(2, 1fr); }
+    .score-grid { grid-template-columns: repeat(5, 1fr); }
+    .activity-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .metric-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+
+    .avatar-btn,
+    .score-btn {
+      min-height: 50px;
+      border-radius: 18px;
+      background: #f1efec;
+      font-weight: 900;
+    }
+
+    .avatar-btn { font-size: 1.35rem; }
+    .avatar-btn.selected,
+    .score-btn.selected { background: var(--yellow); box-shadow: inset 0 0 0 3px rgba(31, 31, 31, 0.08); }
+
+    .mood-btn {
+      min-height: 74px;
+      border-radius: 20px;
+      padding: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 10px;
+      background: var(--mood-bg, #f1efec);
+      font-weight: 850;
+      text-align: left;
+    }
+
+    .mood-btn.selected { box-shadow: inset 0 0 0 3px var(--mood-color, rgba(31, 31, 31, 0.08)); }
+    .mood-btn span:first-child { font-size: 1.25rem; }
+
+    .range-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .range-value {
+      border-radius: 999px;
+      padding: 4px 10px;
+      background: var(--ink);
+      color: var(--white);
+      font-size: 0.78rem;
+      font-weight: 850;
+    }
+
+    .scale-row {
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 0.72rem;
+      font-weight: 800;
+    }
+
+    .extra-grid {
+      display: none;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .extra-grid.show { display: grid; }
+
+    .primary,
+    .secondary,
+    .danger-btn {
+      width: 100%;
+      min-height: 52px;
+      border-radius: 999px;
+      margin-top: 14px;
+      padding: 0 15px;
+      font-size: 0.9rem;
+      font-weight: 900;
+    }
+
+    .primary {
+      background: var(--yellow);
+      color: #332c22;
+      box-shadow: 0 10px 18px rgba(255, 189, 46, 0.26);
+    }
+
+    .secondary { background: #f1efec; color: #5e5751; }
+    .danger-btn { background: #ffe7e4; color: var(--danger); }
+    .danger { color: var(--danger); }
+
+    .activity-card {
+      min-height: 168px;
+      border-radius: 25px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      text-align: left;
+      background: var(--card-color, var(--peach));
+    }
+
+    .activity-art { font-size: 2rem; line-height: 1; }
+    .activity-card h3 { margin: 0 0 3px; font-size: 0.98rem; }
+    .activity-card p { margin-bottom: 0; color: rgba(31, 31, 31, 0.58); font-size: 0.76rem; font-weight: 800; }
+    .start-label { align-self: flex-start; border-radius: 999px; padding: 6px 10px; background: rgba(255, 255, 255, 0.48); font-size: 0.72rem; font-weight: 900; }
+
+    .timer-panel,
+    .post-panel,
+    .limit-panel {
+      position: absolute;
+      left: 14px;
+      right: 14px;
+      bottom: 91px;
+      z-index: 8;
+      display: none;
+      border-radius: 30px;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.97);
+      box-shadow: 0 24px 50px rgba(49, 44, 39, 0.24);
+      max-height: calc(100% - 140px);
+      overflow: auto;
+    }
+
+    .timer-panel.show,
+    .post-panel.show,
+    .limit-panel.show { display: block; }
+
+    .tag-row { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 12px; }
+    .tag { color: #5a4b36; background: #f3ead7; }
+
+    .timer-bar-wrap {
+      height: 22px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: #eee9e3;
+      margin: 15px 0 8px;
+    }
+
+    .timer-bar {
+      height: 100%;
+      width: 0%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--green), var(--yellow));
+      transition: width 0.3s linear;
+    }
+
+    .action-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-top: 14px;
+    }
+
+    .action-row button {
+      flex: 1;
+      min-height: 42px;
+      border-radius: 999px;
+      padding: 0 12px;
+      font-size: 0.8rem;
+      font-weight: 900;
+      background: #f1efec;
+    }
+
+    .action-row button:first-child { background: var(--yellow); }
+
+    .journal-score {
+      text-align: center;
+      margin: 12px 0 22px;
+    }
+
+    .journal-score strong {
+      display: block;
+      font-size: 4rem;
+      line-height: 1;
+      letter-spacing: 0;
+      font-weight: 900;
+    }
+
+    .journal-score span { color: var(--muted); font-size: 0.9rem; font-weight: 750; }
+
+    .mini-chart {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 8px;
+      align-items: end;
+      min-height: 128px;
+      padding: 12px;
+      border-radius: 20px;
+      background: #f1efec;
+    }
+
+    .mini-bar {
+      min-height: 12px;
+      border-radius: 999px;
+      display: grid;
+      place-items: end center;
+      padding-bottom: 6px;
+      color: rgba(31, 31, 31, 0.68);
+      background: var(--bar-color, var(--green));
+      font-size: 0.68rem;
+      font-weight: 900;
+    }
+
+    .history-list { display: grid; gap: 10px; margin-top: 12px; }
+
+    .history-item {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 10px;
+      padding: 12px;
+      border-radius: 20px;
+    }
+
+    .history-emoji {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: #f1efec;
+      font-size: 1.12rem;
+    }
+
+    .history-item strong { display: block; font-size: 0.88rem; margin-bottom: 2px; }
+    .history-item small { display: block; color: var(--muted); font-size: 0.72rem; font-weight: 750; }
+
+    .empty {
+      border-radius: 22px;
+      padding: 18px;
+      text-align: center;
+      color: var(--muted);
+      background: rgba(255, 255, 255, 0.68);
+      font-size: 0.86rem;
+      font-weight: 750;
+    }
+
+    .donut {
+      width: 158px;
+      height: 158px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: conic-gradient(var(--green-dark) var(--progress, 0%), rgba(141, 200, 162, 0.18) 0deg);
+      box-shadow: inset 0 0 0 14px rgba(255, 255, 255, 0.78);
+    }
+
+    .donut-inner {
+      width: 112px;
+      height: 112px;
+      display: grid;
+      place-items: center;
+      align-content: center;
+      text-align: center;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.94);
+    }
+
+    .donut-inner strong { font-size: 1.55rem; line-height: 1; font-weight: 900; }
+    .donut-inner span { margin-top: 6px; color: var(--muted); font-size: 0.72rem; font-weight: 800; }
+
+    .focus-layout {
+      display: grid;
+      grid-template-columns: 158px 1fr;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .category-grid,
+    .quick-add {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 9px;
+      margin: 12px 0;
+    }
+
+    .choice-card,
+    .quick-min {
+      min-height: 58px;
+      border-radius: 18px;
+      padding: 10px 8px;
+      color: var(--muted);
+      background: #f1efec;
+      font-size: 0.78rem;
+      font-weight: 850;
+    }
+
+    .choice-card span { display: block; font-size: 1.18rem; margin-bottom: 4px; }
+    .choice-card.active { color: var(--green-dark); background: #d5eadc; }
+
+    .focus-ring {
+      width: min(74vw, 254px);
+      aspect-ratio: 1;
+      display: grid;
+      place-items: center;
+      margin: 8px auto 18px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at center, rgba(255, 255, 255, 0.95) 0 58%, transparent 59%),
+        conic-gradient(var(--green-dark) var(--timer-progress, 0%), rgba(141, 200, 162, 0.18) 0deg);
+      box-shadow: var(--soft-shadow);
+    }
+
+    .focus-core {
+      width: 72%;
+      height: 72%;
+      display: grid;
+      place-items: center;
+      align-content: center;
+      border-radius: 50%;
+      background: var(--white);
+      border: 1px solid var(--line);
+    }
+
+    .focus-clock {
+      color: var(--green-dark);
+      font-size: 3.3rem;
+      line-height: 1;
+      font-weight: 900;
+      letter-spacing: 0;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .focus-state {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 850;
+    }
+
+    .sleep-status {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 18px;
+      background: #f1efec;
+      margin-bottom: 16px;
+    }
+
+    .sleep-status strong { display: block; font-size: 0.92rem; }
+    .sleep-status span { color: var(--muted); font-size: 0.78rem; font-weight: 800; }
+    .sleeping { background: linear-gradient(180deg, rgba(168, 191, 245, 0.24), transparent), var(--white); }
+
+    .video-frame {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      margin: 0 0 12px;
+      border: 0;
+      border-radius: 18px;
+      background: #000;
+    }
+
+    .hidden { display: none !important; }
+
+    .time-large {
+      margin: 8px 0 14px;
+      color: var(--blue);
+      font-size: 3.2rem;
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: 0;
+    }
+
+    .chart-wrap {
+      height: 180px;
+      margin: 12px 0 6px;
+      border-radius: 20px;
+      background: #f1efec;
+      padding: 10px;
+    }
+
+    #sleepDashboardChart { width: 100%; height: 100%; display: block; }
+
+    .tip-list { display: grid; gap: 10px; }
+    .tip { padding: 12px; border-radius: 18px; background: #f1efec; }
+    .tip p { margin-bottom: 0; font-size: 0.84rem; }
+
+    .metric-card {
+      min-height: 92px;
+      border-radius: 20px;
+      padding: 13px;
+      background: var(--metric-bg, var(--white));
+    }
+
+    .metric-card span { display: block; color: rgba(31, 31, 31, 0.58); font-size: 0.72rem; font-weight: 850; margin-bottom: 6px; }
+    .metric-card strong { display: block; font-size: 1.45rem; line-height: 1; font-weight: 900; font-variant-numeric: tabular-nums; }
+
+    details.details-card { padding: 0; overflow: hidden; }
+    details.details-card summary {
+      cursor: pointer;
+      list-style: none;
+      padding: 16px 18px;
+      font-size: 0.92rem;
+      font-weight: 900;
+    }
+    details.details-card summary::-webkit-details-marker { display: none; }
+    .details-body { padding: 0 18px 18px; }
+
+    .support-card.urgent { background: #ffe7e4; }
+    .support-card.green { background: #d5eadc; }
+    .support-card.gold { background: #f3e6b3; }
+
+    .bottom-nav {
+      flex: 0 0 auto;
+      height: 82px;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      align-items: center;
+      padding: 4px 14px 15px;
+      background: var(--app-bg);
+      border-top: 1px solid rgba(0, 0, 0, 0.03);
+    }
+
+    .nav-btn {
+      min-width: 0;
+      display: grid;
+      justify-items: center;
+      gap: 4px;
+      color: #8f8a84;
+      font-size: 0.64rem;
+      font-weight: 850;
+    }
+
+    .nav-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      color: currentColor;
+      font-size: 1rem;
+      line-height: 1;
+    }
+
+    .nav-btn.active { color: var(--ink); }
+    .nav-btn.active .nav-icon { background: rgba(0, 0, 0, 0.06); }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 24px;
+      z-index: 20;
+      transform: translate(-50%, 8px);
+      width: min(342px, calc(100vw - 34px));
+      border-radius: 999px;
+      padding: 12px 16px;
+      text-align: center;
+      color: var(--white);
+      background: rgba(31, 31, 31, 0.92);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.18s ease, transform 0.18s ease;
+      font-size: 0.84rem;
+      font-weight: 850;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    @media (max-width: 520px) {
+      body { padding: 0; background: var(--app-bg); }
+      .device { width: 100%; height: 100vh; min-height: 100vh; border-radius: 0; box-shadow: none; }
+      .statusbar { padding-top: env(safe-area-inset-top); }
+      .bottom-nav { padding-bottom: max(15px, env(safe-area-inset-bottom)); }
+    }
+
+    @media (max-width: 390px) {
+      .screen { padding-inline: 14px; }
+      .focus-layout { grid-template-columns: 1fr; }
+      .donut { margin: 0 auto; }
+      .activity-grid, .mood-grid { grid-template-columns: 1fr; }
+      .score-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+      h1 { font-size: 1.65rem; }
+      .focus-clock { font-size: 2.8rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="device">
+    <div class="statusbar" aria-hidden="true">
+      <span>9:41</span>
+      <span class="status-icons">▮▮▮ ᯤ ▰</span>
+    </div>
+
+    <main class="screen">
+      <section id="homePage" class="page active" aria-labelledby="homeTitle">
+        <div class="top-row">
+          <h1 id="homeTitle">Hi, Student</h1>
+          <div id="profileAvatar" class="profile-dot">🌟</div>
+        </div>
+
+        <div id="calendarRow" class="calendar-row" aria-label="Current week"></div>
+
+        <div class="card hero-card">
+          <h2>My Wellness Journey</h2>
+          <p>Check your mood, protect focus time, and settle into sleep with one calm app.</p>
+        </div>
+
+        <div class="section-head">
+          <h2>Dashboard</h2>
+          <button type="button" data-page="profilePage" data-profile-tab="trends">Details</button>
+        </div>
+        <div class="summary-grid">
+          <button class="summary-card" style="--summary-bg:#d5eadc" type="button" data-page="moodPage">
+            <span id="homeMoodScore" class="summary-num">--</span>
+            <strong>Mood average</strong>
+            <small id="homeMoodSmall">No check-ins yet</small>
+          </button>
+          <button class="summary-card" style="--summary-bg:#ded5ff" type="button" data-page="focusPage">
+            <span id="homeFocusRemaining" class="summary-num">120m</span>
+            <strong>Screen balance</strong>
+            <small id="homeFocusSmall">0m logged</small>
+          </button>
+          <button class="summary-card wide" style="--summary-bg:#ffe4a3" type="button" data-page="sleepPage">
+            <span id="homeSleepLatest" class="summary-num">--</span>
+            <span>
+              <strong>Sleep latest</strong>
+              <small id="homeSleepSmall">No wake-up check-ins yet</small>
+            </span>
+          </button>
+        </div>
+
+        <div class="section-head">
+          <h2>Quick actions</h2>
+        </div>
+        <div class="quick-grid">
+          <button class="quick-card" style="--quick-bg:#ffd8d2" type="button" data-page="moodPage" data-mood-tab="moodCheckinPanel">
+            <strong>Mood check-in</strong>
+            <p>Start with how you feel right now.</p>
+            <span class="pill">Mood</span>
+          </button>
+          <button class="quick-card" style="--quick-bg:#d5eadc" type="button" data-page="focusPage" data-focus-tab="focusBalancePanel">
+            <strong>Log screen time</strong>
+            <p>Track social, games, or videos.</p>
+            <span class="pill">Focus</span>
+          </button>
+          <button class="quick-card" style="--quick-bg:#ded5ff" type="button" data-page="focusPage" data-focus-tab="focusStudyPanel">
+            <strong>Start focus</strong>
+            <p>Settle into one study session.</p>
+            <span class="pill">Study</span>
+          </button>
+          <button class="quick-card" style="--quick-bg:#d7e3ff" type="button" data-page="sleepPage" data-sleep-tab="sleepTonightPanel">
+            <strong>Bedtime check</strong>
+            <p>Plan sleep and breathe slowly.</p>
+            <span class="pill">Sleep</span>
+          </button>
+        </div>
+      </section>
+
+      <section id="moodPage" class="page" aria-labelledby="moodTitle">
+        <div class="top-row">
+          <div>
+            <h1 id="moodTitle">Mood</h1>
+            <p>Check in, try an activity, then compare how you feel after.</p>
+          </div>
+          <div id="profileAvatarMood" class="profile-dot">🌟</div>
+        </div>
+
+        <div class="tabs" style="--tab-count:3" data-tabs="mood">
+          <button class="tab-btn active" type="button" data-panel="moodCheckinPanel">Check-in</button>
+          <button class="tab-btn" type="button" data-panel="moodActivitiesPanel">Activities</button>
+          <button class="tab-btn" type="button" data-panel="moodJournalPanel">Journal</button>
+        </div>
+
+        <div id="moodCheckinPanel" class="tool-panel active">
+          <form id="moodCheckinForm" class="form-card">
+            <h2>How are you feeling?</h2>
+            <p>Save a first mood check before choosing an activity.</p>
+
+            <div class="field">
+              <label>Session</label>
+              <div class="segmented" role="group" aria-label="Session">
+                <button type="button" class="segment active" data-mood-session="Morning">Morning</button>
+                <button type="button" class="segment" data-mood-session="Night">Evening</button>
+              </div>
+            </div>
+
+            <div class="field">
+              <label>Avatar</label>
+              <div id="moodAvatarRow" class="avatar-row"></div>
+            </div>
+
+            <div class="field">
+              <label>Mood</label>
+              <div id="moodGrid" class="mood-grid"></div>
+            </div>
+
+            <div class="field">
+              <div class="range-head">
+                <label for="moodIntensityInput">Intensity</label>
+                <span class="range-value"><span id="moodIntensityValue">5</span>/10</span>
+              </div>
+              <input id="moodIntensityInput" type="range" min="1" max="10" value="5" />
+              <div class="scale-row"><span>Lighter</span><span>Heavier</span></div>
+            </div>
+
+            <div class="field">
+              <label>Overall wellbeing</label>
+              <div id="moodWellbeingGrid" class="score-grid" aria-label="Wellbeing score"></div>
+              <div class="scale-row"><span>Low</span><span>Great</span></div>
+            </div>
+
+            <div id="moodNightExtras" class="extra-grid field">
+              <div>
+                <label for="moodSleepInput">Sleep</label>
+                <input id="moodSleepInput" type="number" min="0" max="24" step="0.5" placeholder="Hours" />
+              </div>
+              <div>
+                <label for="moodScreenInput">Screen</label>
+                <input id="moodScreenInput" type="number" min="0" max="24" step="0.5" placeholder="Hours" />
+              </div>
+            </div>
+
+            <button class="primary" type="submit">Save Mood and Show Activities</button>
+          </form>
+        </div>
+
+        <div id="moodActivitiesPanel" class="tool-panel">
+          <div class="section-head">
+            <div>
+              <h2>Self-care</h2>
+              <p id="moodActivityIntro">Save a mood first to personalize activities.</p>
+            </div>
+          </div>
+          <div class="tabs" style="--tab-count:4" id="moodActivityTabs">
+            <button class="tab-btn active" type="button" data-activity-tab="Practices">Practices</button>
+            <button class="tab-btn" type="button" data-activity-tab="Books">Books</button>
+            <button class="tab-btn" type="button" data-activity-tab="Movies">Movies</button>
+            <button class="tab-btn" type="button" data-activity-tab="Tests">Tests</button>
+          </div>
+          <div id="moodActivityGrid" class="activity-grid"></div>
+        </div>
+
+        <div id="moodJournalPanel" class="tool-panel">
+          <div class="journal-score">
+            <strong id="moodScoreTotal">0</strong>
+            <span>wellness points from check-ins and activities</span>
+          </div>
+          <div class="card">
+            <h2>Wellbeing trend</h2>
+            <p>Recent scores from this device.</p>
+            <div id="moodTrendChart" class="mini-chart"></div>
+          </div>
+          <div class="section-head">
+            <h2>Recent moods</h2>
+          </div>
+          <div id="moodHistoryList" class="history-list"></div>
+          <div class="section-head">
+            <h2>Completed activities</h2>
+          </div>
+          <div id="moodActivityHistoryList" class="history-list"></div>
+        </div>
+      </section>
+
+      <section id="focusPage" class="page" aria-labelledby="focusTitle">
+        <div class="top-row">
+          <div>
+            <h1 id="focusTitle">Focus</h1>
+            <p>Log screen time and earn softer breaks through study sessions.</p>
+          </div>
+          <button class="round-btn" type="button" data-page="homePage">‹</button>
+        </div>
+
+        <div class="tabs" style="--tab-count:2" data-tabs="focus">
+          <button class="tab-btn active" type="button" data-panel="focusBalancePanel">Balance</button>
+          <button class="tab-btn" type="button" data-panel="focusStudyPanel">Study</button>
+        </div>
+
+        <div id="focusBalancePanel" class="tool-panel active">
+          <div class="card">
+            <div class="section-head">
+              <div>
+                <h2>Today’s screen time</h2>
+                <p id="focusScreenMessage">A quiet start. Log only what you need.</p>
+              </div>
+              <span class="pill"><span id="focusTotal">0</span>/<span id="focusLimit">120</span>m</span>
+            </div>
+            <div class="focus-layout">
+              <div id="focusDonut" class="donut" style="--progress:0%">
+                <div class="donut-inner">
+                  <strong id="focusBigNumber">0m</strong>
+                  <span>logged</span>
+                </div>
+              </div>
+              <div class="metric-grid">
+                <div class="metric-card" style="--metric-bg:#d5eadc">
+                  <span>Remaining</span>
+                  <strong id="focusRemaining">120m</strong>
+                </div>
+                <div class="metric-card" style="--metric-bg:#ffe4a3">
+                  <span>Break bank</span>
+                  <strong id="focusBank">00:00</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-card">
+            <h2>Add activity</h2>
+            <div class="category-grid" role="group" aria-label="Activity category">
+              <button class="choice-card active" type="button" data-focus-category="Social"><span>📱</span>Social</button>
+              <button class="choice-card" type="button" data-focus-category="Gaming"><span>🎮</span>Games</button>
+              <button class="choice-card" type="button" data-focus-category="Video"><span>▶</span>Video</button>
+            </div>
+            <div class="field">
+              <div class="range-head">
+                <label for="focusSlider">Minutes</label>
+                <span class="range-value" id="focusSliderValue">15 mins</span>
+              </div>
+              <input id="focusSlider" type="range" min="5" max="120" step="5" value="15" />
+            </div>
+            <div class="quick-add">
+              <button class="quick-min" type="button" data-focus-mins="15">15m</button>
+              <button class="quick-min" type="button" data-focus-mins="30">30m</button>
+              <button class="quick-min" type="button" data-focus-mins="60">60m</button>
+            </div>
+            <button class="primary" id="focusSaveLogBtn" type="button">Log activity</button>
+            <div id="focusUndoRow" class="sleep-status hidden">
+              <span id="focusUndoText">Last log saved.</span>
+              <button type="button" class="secondary" id="focusUndoBtn" style="width:auto;margin:0;min-height:36px;">Undo</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="focusStudyPanel" class="tool-panel">
+          <div class="card" style="text-align:center">
+            <h2>Settle into one task</h2>
+            <div id="focusTimerRing" class="focus-ring" style="--timer-progress:0%">
+              <div class="focus-core">
+                <div id="focusClock" class="focus-clock">25:00</div>
+                <div id="focusTimerState" class="focus-state">Ready</div>
+              </div>
+            </div>
+            <p>A completed focus session adds five minutes to your break bank.</p>
+            <button class="primary" id="focusTimerBtn" type="button">Start focus</button>
+            <button class="secondary" id="focusResetBtn" type="button">Reset timer</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="sleepPage" class="page" aria-labelledby="sleepTitle">
+        <div class="top-row">
+          <div>
+            <h1 id="sleepTitle">Sleep</h1>
+            <p>Plan bedtime, breathe slowly, then check in when you wake up.</p>
+          </div>
+          <button class="round-btn" type="button" data-page="homePage">‹</button>
+        </div>
+
+        <div class="tabs" style="--tab-count:3" data-tabs="sleep">
+          <button class="tab-btn active" type="button" data-panel="sleepTonightPanel">Tonight</button>
+          <button class="tab-btn" type="button" data-panel="sleepTipsPanel">Tips</button>
+          <button class="tab-btn" type="button" data-panel="sleepDashboardPanel">Dashboard</button>
+        </div>
+
+        <div id="sleepTonightPanel" class="tool-panel active">
+          <div id="sleepTonightCard" class="form-card">
+            <div class="sleep-status">
+              <div>
+                <strong id="sleepStatusTitle">Tonight</strong>
+                <span id="sleepStatusDetail">Choose a bedtime before starting your sleep check-in.</span>
+              </div>
+              <span id="sleepStatusMark">Ready</span>
+            </div>
+
+            <div id="sleepSetupFlow">
+              <label for="sleepBedtime">Planned bedtime</label>
+              <input type="time" id="sleepBedtime" value="22:30" />
+              <button type="button" class="secondary" id="sleepPlayVideoBtn">Play Deep Breathing Video</button>
+              <iframe id="sleepBreathingVideo" class="video-frame hidden" title="Deep breathing video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+              <button type="button" class="primary" id="sleepStartBtn">I'm sleeping now</button>
+            </div>
+
+            <div id="sleepFlow" class="hidden">
+              <h2>Good morning</h2>
+              <p>When this is the first thing you open after waking up, tap below to record your sleep.</p>
+              <div class="time-large" id="sleepStartTime">--:--</div>
+              <button type="button" class="primary" id="sleepWakeBtn">I woke up</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="sleepTipsPanel" class="tool-panel">
+          <div class="card">
+            <h2>Sleep Hygiene</h2>
+            <p>Bite-sized reminders you can read quickly before bedtime.</p>
+            <div class="tip-list">
+              <article class="tip"><h3>Dim the lights</h3><p>Lower light helps your brain prepare for sleep about one hour before bed.</p></article>
+              <article class="tip"><h3>Park the phone</h3><p>After the breathing video, put the phone away so the screen does not keep your brain alert.</p></article>
+              <article class="tip"><h3>Keep tomorrow simple</h3><p>Place school items, water, and uniform where you can find them.</p></article>
+              <article class="tip"><h3>Use a steady wake time</h3><p>A regular morning check-in helps your body learn a more stable sleep rhythm.</p></article>
+            </div>
+          </div>
+        </div>
+
+        <div id="sleepDashboardPanel" class="tool-panel">
+          <div class="metric-grid">
+            <div class="metric-card" style="--metric-bg:#d7e3ff"><span>Entries</span><strong id="sleepMetricEntries">0</strong></div>
+            <div class="metric-card" style="--metric-bg:#d5eadc"><span>Average</span><strong id="sleepMetricAverage">--</strong></div>
+            <div class="metric-card" style="--metric-bg:#ffe4a3"><span>Latest</span><strong id="sleepMetricLatest">--</strong></div>
+            <div class="metric-card" style="--metric-bg:#ded5ff"><span>Bedtime</span><strong id="sleepMetricBedtime">22:30</strong></div>
+          </div>
+          <div class="card">
+            <h2>Sleep trend</h2>
+            <div class="chart-wrap">
+              <canvas id="sleepDashboardChart"></canvas>
+            </div>
+            <div id="sleepHistory" class="history-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="profilePage" class="page" aria-labelledby="profileTitle">
+        <div class="top-row">
+          <button class="round-btn" type="button" data-page="homePage">‹</button>
+          <h1 id="profileTitle">Profile</h1>
+          <div id="profileAvatarLarge" class="profile-dot">🌟</div>
+        </div>
+
+        <div class="tabs" style="--tab-count:3" data-tabs="profile">
+          <button class="tab-btn active" type="button" data-panel="profileDataPanel">Data</button>
+          <button class="tab-btn" type="button" data-panel="profileTrendsPanel">Trends</button>
+          <button class="tab-btn" type="button" data-panel="profileSupportPanel">Support</button>
+        </div>
+
+        <div id="profileDataPanel" class="tool-panel active">
+          <div class="data-card">
+            <h2>Local data</h2>
+            <p>All check-ins, activities, focus logs, and sleep records are stored on this device.</p>
+            <button id="exportBtn" class="primary" type="button">Export Combined CSV</button>
+            <button id="clearBtn" class="danger-btn" type="button">Clear All Local Data</button>
+          </div>
+        </div>
+
+        <div id="profileTrendsPanel" class="tool-panel">
+          <div class="metric-grid">
+            <div class="metric-card" style="--metric-bg:#d5eadc"><span>Check-ins</span><strong id="dashCheckins">0</strong></div>
+            <div class="metric-card" style="--metric-bg:#ffe4a3"><span>Streak</span><strong id="dashStreak">0d</strong></div>
+            <div class="metric-card" style="--metric-bg:#ded5ff"><span>Activities</span><strong id="dashActivities">0</strong></div>
+            <div class="metric-card" style="--metric-bg:#ffd8d2"><span>Avg wellbeing</span><strong id="dashAverageWellbeing">--</strong></div>
+            <div class="metric-card" style="--metric-bg:#d7e3ff"><span>Sleep avg</span><strong id="dashSleepAverage">--</strong></div>
+            <div class="metric-card" style="--metric-bg:#f3e6b3"><span>Break bank</span><strong id="dashBreakBank">00:00</strong></div>
+          </div>
+
+          <details class="details-card" open>
+            <summary>Mood trends</summary>
+            <div class="details-body">
+              <div id="profileMoodTrendChart" class="mini-chart"></div>
+              <div id="profileMoodDetails" class="history-list"></div>
+            </div>
+          </details>
+
+          <details class="details-card">
+            <summary>Activity outcomes</summary>
+            <div class="details-body">
+              <div id="profileActivityOutcomes" class="metric-grid"></div>
+              <div id="profileActivityDetails" class="history-list"></div>
+            </div>
+          </details>
+
+          <details class="details-card">
+            <summary>Sleep history</summary>
+            <div class="details-body">
+              <div id="profileSleepDetails" class="history-list"></div>
+            </div>
+          </details>
+
+          <details class="details-card">
+            <summary>Focus summary</summary>
+            <div class="details-body">
+              <div id="profileFocusSummary" class="history-list"></div>
+            </div>
+          </details>
+        </div>
+
+        <div id="profileSupportPanel" class="tool-panel">
+          <div class="support-card urgent">
+            <h2>Immediate help</h2>
+            <p>If a student feels unsafe or may hurt themselves or someone else, contact local emergency services now.</p>
+          </div>
+          <div class="support-card green">
+            <h2>Trusted adult</h2>
+            <p>Reach out to a parent, guardian, teacher, school counselor, or another safe adult nearby.</p>
+          </div>
+          <div class="support-card gold">
+            <h2>Next step</h2>
+            <p>Write one sentence: "I need help with..." Then show it to the person you choose.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <nav class="bottom-nav" aria-label="Primary">
+      <button class="nav-btn active" type="button" data-page="homePage"><span class="nav-icon">⌂</span><span>Home</span></button>
+      <button class="nav-btn" type="button" data-page="moodPage"><span class="nav-icon">◎</span><span>Mood</span></button>
+      <button class="nav-btn" type="button" data-page="focusPage"><span class="nav-icon">◷</span><span>Focus</span></button>
+      <button class="nav-btn" type="button" data-page="sleepPage"><span class="nav-icon">☾</span><span>Sleep</span></button>
+      <button class="nav-btn" type="button" data-page="profilePage"><span class="nav-icon">○</span><span>Profile</span></button>
+    </nav>
+
+    <div id="moodTimerPanel" class="timer-panel" aria-live="polite">
+      <div class="tag-row">
+        <span id="timerMoodTag" class="tag">Mood</span>
+        <span id="timerDurationTag" class="tag">Time</span>
+        <span id="timerXpTag" class="tag">XP</span>
+      </div>
+      <h2 id="timerTitle">Activity</h2>
+      <p id="timerText">Instructions</p>
+      <div class="timer-bar-wrap" aria-label="Activity timer progress">
+        <div id="timerBar" class="timer-bar"></div>
+      </div>
+      <strong id="timerStatus">Ready when you are.</strong>
+      <div class="action-row">
+        <button id="startTimerBtn" type="button">Start</button>
+        <button id="openPostCheckBtn" type="button">Complete</button>
+        <button id="cancelActivityBtn" class="danger" type="button">Close</button>
+      </div>
+    </div>
+
+    <div id="postActivityPanel" class="post-panel" aria-live="polite">
+      <h2>Post-activity check</h2>
+      <p>Compare how you feel now with your first mood check before this activity.</p>
+      <div class="field">
+        <label>Mood now</label>
+        <div id="postMoodGrid" class="mood-grid"></div>
+      </div>
+      <div class="field">
+        <label>Overall wellbeing now</label>
+        <div id="postWellbeingGrid" class="score-grid"></div>
+        <div class="scale-row"><span>Low</span><span>Great</span></div>
+      </div>
+      <div class="field">
+        <div class="range-head">
+          <label for="postIntensityInput">Intensity now</label>
+          <span class="range-value"><span id="postIntensityValue">5</span>/10</span>
+        </div>
+        <input id="postIntensityInput" type="range" min="1" max="10" value="5" />
+      </div>
+      <div class="action-row">
+        <button id="savePostCheckBtn" type="button">Save check</button>
+        <button id="cancelPostCheckBtn" class="danger" type="button">Cancel</button>
+      </div>
+    </div>
+
+    <div id="focusLimitPanel" class="limit-panel">
+      <h2>You’ve reached today’s screen limit</h2>
+      <p>Take a quiet reset, spend earned break time, or continue with the streak paused for today.</p>
+      <button class="primary" type="button" data-focus-limit-action="save">Close apps and reset</button>
+      <button class="secondary" type="button" data-focus-limit-action="spend">Use 15m break bank</button>
+      <button class="danger-btn" type="button" data-focus-limit-action="ignore">Continue for today</button>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" role="status"></div>
+
+  <script>
+    const MOOD_DB_NAME = "moodQuestLocal";
+    const MOOD_DB_VERSION = 1;
+    const MOOD_STORE = "moodEntries";
+    const ACTIVITY_STORE = "activityCompletions";
+    const FOCUS_STORAGE_KEY = "focusFlowV6";
+    const SLEEP_STORAGE_KEY = "sleep_checkin_state";
+    const FOCUS_DEFAULT_LIMIT = 120;
+    const FOCUS_SECONDS = 1500;
+
+    const byId = id => document.getElementById(id);
+
+    const moods = [
+      { id: "angry", label: "Angry", emoji: "😡", color: "#ef6b5f", bg: "#ffd9d4" },
+      { id: "sad", label: "Sad", emoji: "🙁", color: "#d79f2c", bg: "#ffe49b" },
+      { id: "calm", label: "Calm", emoji: "🙂", color: "#6fae78", bg: "#d7ecd6" },
+      { id: "anxious", label: "Anxious", emoji: "😟", color: "#8b7c6a", bg: "#ddd7cb" },
+      { id: "happy", label: "Happy", emoji: "😊", color: "#f5b52d", bg: "#ffe4a3" },
+      { id: "excited", label: "Excited", emoji: "🤩", color: "#f28eb7", bg: "#ffd5e6" },
+      { id: "energized", label: "Energized", emoji: "⚡", color: "#6a94e8", bg: "#d7e3ff" },
+      { id: "stressed", label: "Stressed", emoji: "🌀", color: "#8e68c7", bg: "#e3d4ff" },
+      { id: "tired", label: "Tired", emoji: "😴", color: "#e88d41", bg: "#ffd6ad" },
+      { id: "bored", label: "Bored", emoji: "😐", color: "#87909a", bg: "#dfe3e7" }
+    ];
+
+    const activities = {
+      angry: [
+        { id: "wall-push", title: "Pressure release", text: "Push both palms against a wall for 10 seconds, rest, then repeat.", seconds: 120, xp: 15, icon: "⏱", color: "#f5a2a0", count: "9 practices" },
+        { id: "unsent", title: "Unsent message", text: "Write what you want to say, do not send it, then circle the feeling underneath.", seconds: 300, xp: 25, icon: "✍️", color: "#d9c4ff", count: "12 practices" },
+        { id: "cool-count", title: "Cool count", text: "Count backward from 30 while relaxing your jaw and shoulders.", seconds: 120, xp: 15, icon: "🌬", color: "#a8bff5", count: "8 practices" }
+      ],
+      sad: [
+        { id: "kind-note", title: "Kind note", text: "Write what you would say to a friend who felt this way.", seconds: 300, xp: 25, icon: "☕", color: "#ff9d62", count: "15 practices" },
+        { id: "tiny-goods", title: "Tiny goods", text: "List three small things that were okay today, even very small ones.", seconds: 180, xp: 15, icon: "⭐", color: "#a8bff5", count: "8 practices" },
+        { id: "safe-place", title: "Safe place", text: "Think of one place where you feel safe. Notice its colors and sounds.", seconds: 180, xp: 20, icon: "🧘", color: "#8dc8a2", count: "18 practices" }
+      ],
+      calm: [
+        { id: "calm-plan", title: "Calm plan", text: "Pick one next step while your mind feels clear.", seconds: 180, xp: 15, icon: "🧘", color: "#8dc8a2", count: "18 practices" },
+        { id: "gratitude", title: "Relax reading", text: "List three people, places, or moments you appreciate today.", seconds: 180, xp: 15, icon: "📚", color: "#eadfa5", count: "6 practices" },
+        { id: "quiet-check", title: "Quiet check", text: "Notice your breathing and name one thing you want to protect today.", seconds: 120, xp: 15, icon: "⭐", color: "#a8bff5", count: "8 practices" }
+      ],
+      anxious: [
+        { id: "anchor", title: "5-4-3-2-1 scan", text: "Name 5 things you see, 4 you feel, 3 you hear, 2 you smell, and 1 you taste.", seconds: 180, xp: 20, icon: "🧘", color: "#8dc8a2", count: "18 practices" },
+        { id: "box-breath", title: "Healthy sleep", text: "Breathe in for 4, hold for 4, out for 4, hold for 4. Repeat slowly.", seconds: 120, xp: 15, icon: "⭐", color: "#a8bff5", count: "8 practices" },
+        { id: "worry-park", title: "Gentle yoga", text: "Write one worry down, then add one small next step you can take.", seconds: 300, xp: 25, icon: "🪁", color: "#d9c4ff", count: "12 practices" }
+      ],
+      happy: [
+        { id: "savor", title: "Mindful eating", text: "Write what helped this mood show up today, so you can repeat it later.", seconds: 180, xp: 15, icon: "☕", color: "#ff9d62", count: "15 practices" },
+        { id: "share-kindness", title: "Healthy sleep", text: "Send or write one encouraging sentence to someone else.", seconds: 180, xp: 20, icon: "⭐", color: "#a8bff5", count: "8 practices" },
+        { id: "future-fuel", title: "Relax reading", text: "List one thing you want to use this energy for next.", seconds: 120, xp: 15, icon: "📚", color: "#eadfa5", count: "6 practices" }
+      ],
+      excited: [
+        { id: "focus-spark", title: "Focus spark", text: "Choose one thing to do with this excitement and start for five minutes.", seconds: 300, xp: 25, icon: "⭐", color: "#a8bff5", count: "8 practices" },
+        { id: "joy-note", title: "Joy note", text: "Write down what you are excited about and why it matters.", seconds: 180, xp: 15, icon: "✍️", color: "#d9c4ff", count: "12 practices" },
+        { id: "steady-breath", title: "Steady breath", text: "Take ten slow breaths to keep the excitement useful and steady.", seconds: 120, xp: 15, icon: "🧘", color: "#8dc8a2", count: "18 practices" }
+      ],
+      energized: [
+        { id: "movement-burst", title: "Movement burst", text: "Do jumping jacks, squats, or a quick walk if the space is safe.", seconds: 180, xp: 20, icon: "⏱", color: "#f5a2a0", count: "9 practices" },
+        { id: "power-tidy", title: "Power tidy", text: "Use this energy to clear one small area around you.", seconds: 240, xp: 20, icon: "⭐", color: "#a8bff5", count: "8 practices" },
+        { id: "focus-sprint", title: "Focus sprint", text: "Choose one tiny task and work on it until the timer ends.", seconds: 420, xp: 30, icon: "☕", color: "#ff9d62", count: "15 practices" }
+      ],
+      stressed: [
+        { id: "brain-dump", title: "Mindful eating", text: "Write everything on your mind, then star only the next most important thing.", seconds: 360, xp: 30, icon: "☕", color: "#ff9d62", count: "15 practices" },
+        { id: "one-thing", title: "Time balance", text: "Pick one task that takes under 10 minutes. Complete only that.", seconds: 600, xp: 40, icon: "⏱", color: "#f5a2a0", count: "9 practices" },
+        { id: "permission", title: "Meditation", text: "Say: I do not have to solve everything at once. Then breathe slowly.", seconds: 120, xp: 15, icon: "🧘", color: "#8dc8a2", count: "18 practices" }
+      ],
+      tired: [
+        { id: "desk-stretch", title: "Gentle yoga", text: "Roll your shoulders, stretch your neck gently, reach arms up, and shake out your hands.", seconds: 120, xp: 15, icon: "🪁", color: "#d9c4ff", count: "12 practices" },
+        { id: "hydrate", title: "Mindful eating", text: "Drink water slowly, then take 5 deep breaths before restarting.", seconds: 180, xp: 15, icon: "☕", color: "#ff9d62", count: "15 practices" },
+        { id: "sight-stretch", title: "Healthy sleep", text: "Look at the furthest point you can see, then blink slowly ten times.", seconds: 120, xp: 15, icon: "⭐", color: "#a8bff5", count: "8 practices" }
+      ],
+      bored: [
+        { id: "sensory-seek", title: "Pattern hunt", text: "Find the quietest sound you can hear in the room right now.", seconds: 120, xp: 15, icon: "🪁", color: "#d9c4ff", count: "12 practices" },
+        { id: "pattern-hunt", title: "Relax reading", text: "Find three repeating patterns nearby: lines, dots, grids, or shapes.", seconds: 180, xp: 20, icon: "📚", color: "#eadfa5", count: "6 practices" },
+        { id: "micro-challenge", title: "Time balance", text: "Choose a tiny task and race the timer to make a visible start.", seconds: 300, xp: 25, icon: "⏱", color: "#f5a2a0", count: "9 practices" }
+      ]
+    };
+
+    const tabActivities = {
+      Books: [
+        { id: "book-reflect", title: "Relax reading", text: "Read one page slowly, then write one sentence that stays with you.", seconds: 240, xp: 15, icon: "📚", color: "#eadfa5", count: "6 practices" },
+        { id: "book-comfort", title: "Comfort page", text: "Choose a familiar page or quote and notice what feels comforting.", seconds: 180, xp: 15, icon: "📖", color: "#d9c4ff", count: "4 practices" }
+      ],
+      Movies: [
+        { id: "movie-breathe", title: "Scene pause", text: "Pause after a calm scene and copy one slow breath from the moment.", seconds: 120, xp: 10, icon: "🎬", color: "#a8bff5", count: "5 practices" },
+        { id: "movie-kind", title: "Kind character", text: "Name one character who handled a feeling well and what they did.", seconds: 180, xp: 15, icon: "⭐", color: "#ff9d62", count: "7 practices" }
+      ],
+      Tests: [
+        { id: "test-body", title: "Body scan", text: "Check jaw, shoulders, hands, and stomach. Relax each one by one.", seconds: 180, xp: 15, icon: "🧘", color: "#8dc8a2", count: "8 checks" },
+        { id: "test-energy", title: "Energy check", text: "Rate your energy, then choose rest, movement, or focus as your next step.", seconds: 120, xp: 10, icon: "⏱", color: "#f5a2a0", count: "5 checks" }
+      ]
+    };
+
+    const avatarChoices = ["🌟", "🎧", "🎨", "🚀", "🤖"];
+    let moodDb;
+    let moodState = {
+      session: "Morning",
+      avatar: "🌟",
+      selectedMood: "",
+      wellbeingScore: 5,
+      postMood: "",
+      postWellbeing: 5,
+      activityTab: "Practices",
+      renderedActivities: [],
+      lastMoodEntry: null,
+      activeActivity: null,
+      timerId: null,
+      timerRemaining: 0,
+      timerTotal: 0,
+      entries: [],
+      completions: []
+    };
+
+    let focusState = {
+      streak: 12,
+      bankSeconds: 1800,
+      screenTimeLogged: 0,
+      dailyLimit: FOCUS_DEFAULT_LIMIT,
+      lastDate: "",
+      lastLog: null
+    };
+    let focusActiveCategory = "Social";
+    let focusTimerInterval = null;
+    let focusTimerRunning = false;
+    let focusTimerSeconds = FOCUS_SECONDS;
+
+    let sleepState = { bedtime: "22:30", activeSleep: null, history: [] };
+    let sleepClockInterval = null;
+
+    function appShowToast(message) {
+      const toast = byId("toast");
+      toast.textContent = message;
+      toast.classList.add("show");
+      window.clearTimeout(appShowToast.timeout);
+      appShowToast.timeout = window.setTimeout(() => toast.classList.remove("show"), 2400);
+    }
+
+    function appShowPage(pageId) {
+      document.querySelectorAll(".page").forEach(page => page.classList.toggle("active", page.id === pageId));
+      document.querySelectorAll(".nav-btn").forEach(btn => btn.classList.toggle("active", btn.dataset.page === pageId));
+      byId("moodTimerPanel").classList.remove("show");
+      byId("postActivityPanel").classList.remove("show");
+      byId("focusLimitPanel").classList.remove("show");
+      if (pageId === "profilePage") renderProfileDashboard();
+      if (pageId === "sleepPage") renderSleepDashboard();
+      document.querySelector(".screen").scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function switchPanel(group, panelId) {
+      document.querySelectorAll(`[data-tabs="${group}"] .tab-btn`).forEach(btn => btn.classList.toggle("active", btn.dataset.panel === panelId));
+      const panels = {
+        mood: ["moodCheckinPanel", "moodActivitiesPanel", "moodJournalPanel"],
+        focus: ["focusBalancePanel", "focusStudyPanel"],
+        sleep: ["sleepTonightPanel", "sleepTipsPanel", "sleepDashboardPanel"],
+        profile: ["profileDataPanel", "profileTrendsPanel", "profileSupportPanel"]
+      }[group];
+      panels.forEach(id => byId(id).classList.toggle("active", id === panelId));
+      if (panelId === "sleepDashboardPanel") renderSleepDashboard();
+      if (panelId === "profileTrendsPanel") renderProfileDashboard();
+    }
+
+    function formatSeconds(seconds) {
+      const mins = Math.floor(seconds / 60);
+      const secs = seconds % 60;
+      return `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+    }
+
+    function formatMinutes(totalMinutes) {
+      const hours = Math.floor(totalMinutes / 60);
+      const mins = totalMinutes % 60;
+      if (hours === 0) return `${mins}m`;
+      if (mins === 0) return `${hours}h`;
+      return `${hours}h ${mins}m`;
+    }
+
+    function formatDateTime(value) {
+      return new Date(value).toLocaleString([], { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
+    }
+
+    function formatClock(date) {
+      return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    }
+
+    function moodMeta(id) {
+      return moods.find(mood => mood.id === id) || moods[0];
+    }
+
+    function wellbeingForEntry(entry) {
+      if (Number.isFinite(Number(entry.wellbeingScore)) && Number(entry.wellbeingScore) > 0) return Number(entry.wellbeingScore);
+      return null;
+    }
+
+    function openMoodDb() {
+      return new Promise((resolve, reject) => {
+        const request = indexedDB.open(MOOD_DB_NAME, MOOD_DB_VERSION);
+        request.onupgradeneeded = event => {
+          const database = event.target.result;
+          if (!database.objectStoreNames.contains(MOOD_STORE)) {
+            const store = database.createObjectStore(MOOD_STORE, { keyPath: "id", autoIncrement: true });
+            store.createIndex("createdAt", "createdAt", { unique: false });
+            store.createIndex("mood", "mood", { unique: false });
+          }
+          if (!database.objectStoreNames.contains(ACTIVITY_STORE)) {
+            const store = database.createObjectStore(ACTIVITY_STORE, { keyPath: "id", autoIncrement: true });
+            store.createIndex("createdAt", "createdAt", { unique: false });
+            store.createIndex("moodEntryId", "moodEntryId", { unique: false });
+          }
+        };
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+      });
+    }
+
+    function moodAddRecord(storeName, value) {
+      return new Promise((resolve, reject) => {
+        const tx = moodDb.transaction(storeName, "readwrite");
+        const request = tx.objectStore(storeName).add(value);
+        request.onsuccess = () => resolve({ ...value, id: request.result });
+        request.onerror = () => reject(request.error);
+      });
+    }
+
+    function moodGetAllRecords(storeName) {
+      return new Promise((resolve, reject) => {
+        const tx = moodDb.transaction(storeName, "readonly");
+        const request = tx.objectStore(storeName).getAll();
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+      });
+    }
+
+    function moodClearAllRecords() {
+      return new Promise((resolve, reject) => {
+        const tx = moodDb.transaction([MOOD_STORE, ACTIVITY_STORE], "readwrite");
+        tx.objectStore(MOOD_STORE).clear();
+        tx.objectStore(ACTIVITY_STORE).clear();
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => reject(tx.error);
+      });
+    }
+
+    function renderCalendar() {
+      const today = new Date();
+      const monday = new Date(today);
+      const day = monday.getDay() || 7;
+      monday.setDate(today.getDate() - day + 1);
+      byId("calendarRow").innerHTML = Array.from({ length: 7 }, (_, index) => {
+        const date = new Date(monday);
+        date.setDate(monday.getDate() + index);
+        const active = date.toDateString() === today.toDateString();
+        return `<div class="day-pill ${active ? "active" : ""}">${date.toLocaleDateString([], { weekday: "short" })}<span>${date.getDate()}</span></div>`;
+      }).join("");
+    }
+
+    function renderMoodChoices() {
+      byId("moodAvatarRow").innerHTML = avatarChoices.map(avatar => `
+        <button class="avatar-btn ${avatar === moodState.avatar ? "selected" : ""}" type="button" data-avatar="${avatar}" aria-label="Avatar ${avatar}">${avatar}</button>
+      `).join("");
+
+      byId("moodGrid").innerHTML = moods.map(mood => `
+        <button class="mood-btn" type="button" data-mood="${mood.id}" style="--mood-bg:${mood.bg};--mood-color:${mood.color}">
+          <span>${mood.emoji}</span><span>${mood.label}</span>
+        </button>
+      `).join("");
+
+      byId("postMoodGrid").innerHTML = moods.map(mood => `
+        <button class="mood-btn" type="button" data-post-mood="${mood.id}" style="--mood-bg:${mood.bg};--mood-color:${mood.color}">
+          <span>${mood.emoji}</span><span>${mood.label}</span>
+        </button>
+      `).join("");
+
+      renderScoreGrid("moodWellbeingGrid", "wellbeing", moodState.wellbeingScore);
+      renderScoreGrid("postWellbeingGrid", "post-wellbeing", moodState.postWellbeing);
+    }
+
+    function renderScoreGrid(containerId, dataName, selectedValue) {
+      byId(containerId).innerHTML = Array.from({ length: 10 }, (_, index) => {
+        const value = index + 1;
+        return `<button class="score-btn ${value === selectedValue ? "selected" : ""}" type="button" data-${dataName}="${value}">${value}</button>`;
+      }).join("");
+    }
+
+    function setMoodAvatar(avatar) {
+      moodState.avatar = avatar;
+      byId("profileAvatar").textContent = avatar;
+      byId("profileAvatarMood").textContent = avatar;
+      byId("profileAvatarLarge").textContent = avatar;
+      document.querySelectorAll(".avatar-btn").forEach(btn => btn.classList.toggle("selected", btn.dataset.avatar === avatar));
+    }
+
+    function setMoodSelection(moodId) {
+      moodState.selectedMood = moodId;
+      document.querySelectorAll("[data-mood]").forEach(btn => btn.classList.toggle("selected", btn.dataset.mood === moodId));
+    }
+
+    function setPostMoodSelection(moodId) {
+      moodState.postMood = moodId;
+      document.querySelectorAll("[data-post-mood]").forEach(btn => btn.classList.toggle("selected", btn.dataset.postMood === moodId));
+    }
+
+    function recommendedActivities(moodId) {
+      return activities[moodId] || activities.calm;
+    }
+
+    function renderMoodActivities(moodId) {
+      const mood = moodMeta(moodId || "calm");
+      moodState.renderedActivities = moodState.activityTab === "Practices" ? recommendedActivities(mood.id) : tabActivities[moodState.activityTab];
+      byId("moodActivityIntro").textContent = moodState.lastMoodEntry
+        ? `Recommended for ${mood.label.toLowerCase()} at wellbeing ${wellbeingForEntry(moodState.lastMoodEntry) || "--"}/10.`
+        : "Save a mood to personalize these self-care practices.";
+      byId("moodActivityGrid").innerHTML = moodState.renderedActivities.map(activity => `
+        <button class="activity-card" type="button" data-activity="${activity.id}" style="--card-color:${activity.color}">
+          <span class="activity-art">${activity.icon}</span>
+          <span><h3>${activity.title}</h3><p>${activity.count}</p></span>
+          <span class="start-label">Start</span>
+        </button>
+      `).join("");
+    }
+
+    async function saveMoodCheckin(event) {
+      event.preventDefault();
+      if (!moodState.selectedMood) {
+        appShowToast("Choose your mood first.");
+        return;
+      }
+      const now = new Date();
+      const entry = {
+        createdAt: now.toISOString(),
+        date: now.toLocaleDateString(),
+        time: now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        session: moodState.session,
+        avatar: moodState.avatar,
+        mood: moodState.selectedMood,
+        intensity: Number(byId("moodIntensityInput").value),
+        wellbeingScore: moodState.wellbeingScore,
+        sleepHours: moodState.session === "Night" ? Number(byId("moodSleepInput").value || 0) : 0,
+        screenHours: moodState.session === "Night" ? Number(byId("moodScreenInput").value || 0) : 0
+      };
+      moodState.lastMoodEntry = await moodAddRecord(MOOD_STORE, entry);
+      moodState.activityTab = "Practices";
+      document.querySelectorAll("[data-activity-tab]").forEach(btn => btn.classList.toggle("active", btn.dataset.activityTab === "Practices"));
+      renderMoodActivities(entry.mood);
+      await refreshMoodData();
+      appShowToast("Mood saved locally.");
+      switchPanel("mood", "moodActivitiesPanel");
+    }
+
+    function openActivityTimer(activityId) {
+      if (!moodState.lastMoodEntry) {
+        appShowToast("Save a mood check-in first.");
+        switchPanel("mood", "moodCheckinPanel");
+        return;
+      }
+      moodState.activeActivity = moodState.renderedActivities.find(activity => activity.id === activityId);
+      if (!moodState.activeActivity) return;
+      const mood = moodMeta(moodState.lastMoodEntry.mood);
+      moodState.timerRemaining = moodState.activeActivity.seconds;
+      moodState.timerTotal = moodState.activeActivity.seconds;
+      window.clearInterval(moodState.timerId);
+      moodState.timerId = null;
+      byId("timerMoodTag").textContent = mood.label;
+      byId("timerDurationTag").textContent = formatSeconds(moodState.activeActivity.seconds);
+      byId("timerXpTag").textContent = `+${moodState.activeActivity.xp} XP`;
+      byId("timerTitle").textContent = moodState.activeActivity.title;
+      byId("timerText").textContent = moodState.activeActivity.text;
+      byId("timerBar").style.width = "0%";
+      byId("timerStatus").textContent = "Ready when you are.";
+      byId("startTimerBtn").disabled = false;
+      byId("startTimerBtn").textContent = "Start";
+      byId("moodTimerPanel").classList.add("show");
+    }
+
+    function updateActivityTimerDisplay() {
+      const elapsed = moodState.timerTotal - moodState.timerRemaining;
+      const percent = Math.min(100, Math.round((elapsed / moodState.timerTotal) * 100));
+      byId("timerBar").style.width = `${percent}%`;
+      byId("timerStatus").textContent = `${formatSeconds(Math.max(moodState.timerRemaining, 0))} left • ${percent}% complete`;
+    }
+
+    function startActivityTimer() {
+      if (!moodState.activeActivity) return;
+      byId("startTimerBtn").disabled = true;
+      byId("startTimerBtn").textContent = "Running";
+      updateActivityTimerDisplay();
+      moodState.timerId = window.setInterval(() => {
+        moodState.timerRemaining -= 1;
+        updateActivityTimerDisplay();
+        if (moodState.timerRemaining <= 0) openPostActivityCheck();
+      }, 1000);
+    }
+
+    function openPostActivityCheck() {
+      if (!moodState.activeActivity || !moodState.lastMoodEntry) return;
+      window.clearInterval(moodState.timerId);
+      moodState.timerId = null;
+      byId("moodTimerPanel").classList.remove("show");
+      moodState.postMood = moodState.lastMoodEntry.mood;
+      moodState.postWellbeing = wellbeingForEntry(moodState.lastMoodEntry) || 5;
+      setPostMoodSelection(moodState.postMood);
+      renderScoreGrid("postWellbeingGrid", "post-wellbeing", moodState.postWellbeing);
+      byId("postIntensityInput").value = moodState.lastMoodEntry.intensity || 5;
+      byId("postIntensityValue").textContent = byId("postIntensityInput").value;
+      byId("postActivityPanel").classList.add("show");
+    }
+
+    async function savePostActivityCheck() {
+      if (!moodState.activeActivity || !moodState.lastMoodEntry) return;
+      if (!moodState.postMood) {
+        appShowToast("Choose your mood after the activity.");
+        return;
+      }
+      const preWellbeing = wellbeingForEntry(moodState.lastMoodEntry);
+      if (!preWellbeing) {
+        appShowToast("This activity needs a new check-in with wellbeing first.");
+        byId("postActivityPanel").classList.remove("show");
+        switchPanel("mood", "moodCheckinPanel");
+        return;
+      }
+      const postWellbeing = moodState.postWellbeing;
+      const needsFollowUp = postWellbeing < preWellbeing;
+      const outcome = postWellbeing > preWellbeing ? "improved" : postWellbeing === preWellbeing ? "stable" : "try-another";
+      const completion = {
+        moodEntryId: moodState.lastMoodEntry.id,
+        mood: moodState.lastMoodEntry.mood,
+        preMood: moodState.lastMoodEntry.mood,
+        postMood: moodState.postMood,
+        activityId: moodState.activeActivity.id,
+        activityTitle: moodState.activeActivity.title,
+        xp: moodState.activeActivity.xp,
+        preIntensity: moodState.lastMoodEntry.intensity,
+        postIntensity: Number(byId("postIntensityInput").value),
+        preWellbeing,
+        postWellbeing,
+        wellbeingShift: postWellbeing - preWellbeing,
+        outcome,
+        needsFollowUp,
+        createdAt: new Date().toISOString()
+      };
+      await moodAddRecord(ACTIVITY_STORE, completion);
+      byId("postActivityPanel").classList.remove("show");
+      moodState.activeActivity = null;
+      await refreshMoodData();
+      if (needsFollowUp) {
+        appShowToast("That felt lower than before. Try another activity.");
+        renderMoodActivities(moodState.lastMoodEntry.mood);
+        switchPanel("mood", "moodActivitiesPanel");
+      } else {
+        appShowToast(outcome === "improved" ? "You moved upward. Activity saved." : "You stayed steady. Activity saved.");
+        switchPanel("mood", "moodJournalPanel");
+      }
+    }
+
+    function calculateStreak(entries) {
+      const dates = new Set(entries.map(entry => new Date(entry.createdAt).toDateString()));
+      let streak = 0;
+      const cursor = new Date();
+      while (dates.has(cursor.toDateString())) {
+        streak += 1;
+        cursor.setDate(cursor.getDate() - 1);
+      }
+      return streak;
+    }
+
+    function renderMoodTrend(containerId, entries) {
+      const recent = entries.filter(entry => wellbeingForEntry(entry)).slice(0, 7).reverse();
+      byId(containerId).innerHTML = recent.length
+        ? recent.map(entry => {
+            const score = wellbeingForEntry(entry);
+            const mood = moodMeta(entry.mood);
+            return `<div class="mini-bar" style="height:${Math.max(14, score * 10)}%;--bar-color:${mood.color}">${score}</div>`;
+          }).join("")
+        : `<div class="empty" style="grid-column:1/-1">Wellbeing scores will appear after check-ins.</div>`;
+    }
+
+    function moodHistoryMarkup(entry) {
+      const mood = moodMeta(entry.mood);
+      const score = wellbeingForEntry(entry);
+      return `
+        <div class="history-item">
+          <div class="history-emoji" style="background:${mood.bg};color:${mood.color}">${entry.avatar || mood.emoji}</div>
+          <div>
+            <strong>${mood.label} • ${score ? `wellbeing ${score}/10` : `intensity ${entry.intensity}/10`}</strong>
+            <small>${entry.session} • ${formatDateTime(entry.createdAt)}</small>
+          </div>
+          <span class="pill">${entry.intensity}/10</span>
+        </div>
+      `;
+    }
+
+    function activityHistoryMarkup(completion) {
+      const mood = moodMeta(completion.mood);
+      const label = completion.needsFollowUp ? "Try another" : completion.outcome || "Saved";
+      return `
+        <div class="history-item">
+          <div class="history-emoji" style="background:${mood.bg};color:${mood.color}">${mood.label.slice(0, 1)}</div>
+          <div>
+            <strong>${completion.activityTitle}</strong>
+            <small>${formatDateTime(completion.createdAt)} • ${completion.preWellbeing || "--"} to ${completion.postWellbeing || "--"}</small>
+          </div>
+          <span class="pill">${label}</span>
+        </div>
+      `;
+    }
+
+    async function refreshMoodData() {
+      const [entries, completions] = await Promise.all([moodGetAllRecords(MOOD_STORE), moodGetAllRecords(ACTIVITY_STORE)]);
+      entries.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      completions.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      moodState.entries = entries;
+      moodState.completions = completions;
+      if (!moodState.lastMoodEntry && entries.length) {
+        moodState.lastMoodEntry = entries[0];
+        moodState.selectedMood = entries[0].mood;
+        moodState.avatar = entries[0].avatar || moodState.avatar;
+        setMoodAvatar(moodState.avatar);
+        setMoodSelection(moodState.selectedMood);
+      }
+      renderMoodActivities(moodState.lastMoodEntry ? moodState.lastMoodEntry.mood : moodState.selectedMood);
+      renderMoodTrend("moodTrendChart", entries);
+      byId("moodHistoryList").innerHTML = entries.length ? entries.slice(0, 8).map(moodHistoryMarkup).join("") : `<div class="empty">Your mood history will appear after your first check-in.</div>`;
+      byId("moodActivityHistoryList").innerHTML = completions.length ? completions.slice(0, 6).map(activityHistoryMarkup).join("") : `<div class="empty">Completed activities will appear here.</div>`;
+      const pointTotal = completions.reduce((sum, item) => sum + (item.xp || 0), 0) + entries.length * 10;
+      byId("moodScoreTotal").textContent = pointTotal;
+      renderHomeDashboard();
+      renderProfileDashboard();
+    }
+
+    function loadFocusState() {
+      const saved = localStorage.getItem(FOCUS_STORAGE_KEY) || localStorage.getItem("focusFlowV5");
+      if (saved) {
+        try {
+          focusState = { ...focusState, ...JSON.parse(saved) };
+        } catch {
+          appShowToast("Focus data could not be loaded. Starting fresh.");
+        }
+      }
+      const today = new Date().toDateString();
+      if (focusState.lastDate !== today) {
+        focusState.screenTimeLogged = 0;
+        focusState.dailyLimit = FOCUS_DEFAULT_LIMIT;
+        focusState.lastDate = today;
+        focusState.lastLog = null;
+        focusState.streak += 1;
+        persistFocusState();
+      }
+    }
+
+    function persistFocusState() {
+      localStorage.setItem(FOCUS_STORAGE_KEY, JSON.stringify(focusState));
+    }
+
+    function saveFocusState() {
+      persistFocusState();
+      renderFocusUi();
+      renderHomeDashboard();
+      renderProfileDashboard();
+    }
+
+    function renderFocusUi() {
+      const remaining = Math.max(0, focusState.dailyLimit - focusState.screenTimeLogged);
+      const percent = Math.min(100, (focusState.screenTimeLogged / focusState.dailyLimit) * 100);
+      const chartColor = percent >= 100 ? "var(--danger)" : percent >= 75 ? "var(--clay)" : percent >= 50 ? "var(--yellow)" : "var(--green-dark)";
+      byId("focusTotal").textContent = focusState.screenTimeLogged;
+      byId("focusLimit").textContent = focusState.dailyLimit;
+      byId("focusBigNumber").textContent = formatMinutes(focusState.screenTimeLogged);
+      byId("focusRemaining").textContent = `${remaining}m`;
+      byId("focusBank").textContent = formatSeconds(focusState.bankSeconds);
+      byId("focusDonut").style.background = `conic-gradient(${chartColor} ${percent}%, rgba(141, 200, 162, 0.18) 0deg)`;
+      byId("focusScreenMessage").textContent = getFocusMessage(percent, remaining);
+      byId("focusUndoRow").classList.toggle("hidden", !focusState.lastLog);
+      if (focusState.lastLog) byId("focusUndoText").textContent = `${focusState.lastLog.mins}m ${focusState.lastLog.category.toLowerCase()} log saved.`;
+      updateFocusTimerUi();
+    }
+
+    function getFocusMessage(percent, remaining) {
+      if (percent >= 100) return "You have enough information now. Choose the next step with care.";
+      if (percent >= 75) return `${remaining}m left. A short pause now will make the rest of the day easier.`;
+      if (percent >= 50) return "Halfway through the allowance. This is a good moment to reset attention.";
+      if (percent > 0) return "You are still comfortably within range. Keep the next session intentional.";
+      return "A quiet start. Log only what you need, then return to the day.";
+    }
+
+    function submitFocusLog() {
+      const mins = Number(byId("focusSlider").value);
+      focusState.screenTimeLogged += mins;
+      focusState.lastLog = { mins, category: focusActiveCategory };
+      appShowToast(`Logged ${mins}m of ${focusActiveCategory.toLowerCase()} time.`);
+      saveFocusState();
+      if (focusState.screenTimeLogged >= focusState.dailyLimit) window.setTimeout(() => byId("focusLimitPanel").classList.add("show"), 450);
+    }
+
+    function undoFocusLog() {
+      if (!focusState.lastLog) return;
+      focusState.screenTimeLogged = Math.max(0, focusState.screenTimeLogged - focusState.lastLog.mins);
+      appShowToast(`Removed ${focusState.lastLog.mins}m from today.`);
+      focusState.lastLog = null;
+      saveFocusState();
+    }
+
+    function handleFocusLimit(action) {
+      byId("focusLimitPanel").classList.remove("show");
+      if (action === "save") appShowToast("Good reset. Step away and let your eyes rest.");
+      if (action === "spend") {
+        if (focusState.bankSeconds < 900) {
+          appShowToast("You need 15m in the bank first.");
+          window.setTimeout(() => byId("focusLimitPanel").classList.add("show"), 450);
+          return;
+        }
+        focusState.bankSeconds -= 900;
+        focusState.dailyLimit += 15;
+        appShowToast("Used 15m from your break bank.");
+      }
+      if (action === "ignore") {
+        focusState.streak = 0;
+        focusState.dailyLimit += FOCUS_DEFAULT_LIMIT;
+        appShowToast("Streak reset. The app will stay quiet for today.");
+      }
+      saveFocusState();
+    }
+
+    function toggleFocusTimer() {
+      if (!focusTimerRunning) {
+        focusTimerRunning = true;
+        byId("focusTimerBtn").textContent = "Pause focus";
+        byId("focusTimerState").textContent = "In progress";
+        focusTimerInterval = window.setInterval(() => {
+          focusTimerSeconds -= 1;
+          updateFocusTimerUi();
+          if (focusTimerSeconds <= 0) finishFocusTimer();
+        }, 1000);
+        return;
+      }
+      window.clearInterval(focusTimerInterval);
+      focusTimerRunning = false;
+      byId("focusTimerBtn").textContent = "Resume focus";
+      byId("focusTimerState").textContent = "Paused";
+    }
+
+    function resetFocusTimer() {
+      window.clearInterval(focusTimerInterval);
+      focusTimerRunning = false;
+      focusTimerSeconds = FOCUS_SECONDS;
+      byId("focusTimerBtn").textContent = "Start focus";
+      byId("focusTimerState").textContent = "Ready";
+      updateFocusTimerUi();
+    }
+
+    function finishFocusTimer() {
+      window.clearInterval(focusTimerInterval);
+      focusState.bankSeconds += 300;
+      appShowToast("Session complete. Added 5m to your break bank.");
+      resetFocusTimer();
+      saveFocusState();
+    }
+
+    function updateFocusTimerUi() {
+      const elapsed = FOCUS_SECONDS - focusTimerSeconds;
+      const percent = Math.max(0, Math.min(100, (elapsed / FOCUS_SECONDS) * 100));
+      byId("focusClock").textContent = formatSeconds(focusTimerSeconds);
+      byId("focusTimerRing").style.setProperty("--timer-progress", `${percent}%`);
+    }
+
+    function loadSleepState() {
+      try {
+        sleepState = JSON.parse(localStorage.getItem(SLEEP_STORAGE_KEY)) || sleepState;
+      } catch {
+        sleepState = { bedtime: "22:30", activeSleep: null, history: [] };
+      }
+      byId("sleepBedtime").value = sleepState.bedtime || "22:30";
+    }
+
+    function persistSleepState() {
+      localStorage.setItem(SLEEP_STORAGE_KEY, JSON.stringify(sleepState));
+    }
+
+    function startSleep() {
+      sleepState.bedtime = byId("sleepBedtime").value || "22:30";
+      sleepState.activeSleep = { startedAt: Date.now(), plannedBedtime: sleepState.bedtime };
+      persistSleepState();
+      renderSleepUi();
+      appShowToast("Sleep check-in started.");
+    }
+
+    function wakeSleep() {
+      if (!sleepState.activeSleep) return;
+      const endedAt = Date.now();
+      const startedAt = sleepState.activeSleep.startedAt;
+      const durationHours = Math.max(0, (endedAt - startedAt) / 3600000);
+      sleepState.history.unshift({
+        startedAt,
+        endedAt,
+        plannedBedtime: sleepState.activeSleep.plannedBedtime,
+        durationHours: Number(durationHours.toFixed(1))
+      });
+      sleepState.history = sleepState.history.slice(0, 30);
+      sleepState.activeSleep = null;
+      persistSleepState();
+      renderSleepUi();
+      switchPanel("sleep", "sleepDashboardPanel");
+      appShowToast("Wake-up check-in saved.");
+    }
+
+    function playSleepVideo() {
+      const video = byId("sleepBreathingVideo");
+      video.classList.remove("hidden");
+      if (!video.src) video.src = "https://www.youtube-nocookie.com/embed/p8fjYPC-k2k?autoplay=1&rel=0";
+    }
+
+    function renderSleepUi() {
+      byId("sleepMetricBedtime").textContent = sleepState.bedtime || "22:30";
+      if (sleepState.activeSleep) {
+        const start = new Date(sleepState.activeSleep.startedAt);
+        byId("sleepSetupFlow").classList.add("hidden");
+        byId("sleepFlow").classList.remove("hidden");
+        byId("sleepTonightCard").classList.add("sleeping");
+        byId("sleepStatusTitle").textContent = "Sleep in progress";
+        byId("sleepStatusDetail").textContent = `Started at ${formatClock(start)}. Open this page first when you wake up.`;
+        byId("sleepStatusMark").textContent = "Sleeping";
+        byId("sleepStartTime").textContent = formatClock(start);
+      } else {
+        byId("sleepSetupFlow").classList.remove("hidden");
+        byId("sleepFlow").classList.add("hidden");
+        byId("sleepTonightCard").classList.remove("sleeping");
+        byId("sleepStatusTitle").textContent = "Tonight";
+        byId("sleepStatusDetail").textContent = `Planned bedtime: ${sleepState.bedtime || "22:30"}`;
+        byId("sleepStatusMark").textContent = "Ready";
+      }
+      renderSleepDashboard();
+      renderHomeDashboard();
+      renderProfileDashboard();
+    }
+
+    function renderSleepDashboard() {
+      const records = sleepState.history || [];
+      if (!records.length) {
+        byId("sleepMetricEntries").textContent = "0";
+        byId("sleepMetricAverage").textContent = "--";
+        byId("sleepMetricLatest").textContent = "--";
+        byId("sleepHistory").innerHTML = `<div class="empty">No wake-up check-ins recorded yet.</div>`;
+        drawSleepChart([]);
+        return;
+      }
+      const totalHours = records.reduce((sum, item) => sum + item.durationHours, 0);
+      const average = totalHours / records.length;
+      byId("sleepMetricEntries").textContent = records.length;
+      byId("sleepMetricAverage").textContent = `${average.toFixed(1)}h`;
+      byId("sleepMetricLatest").textContent = `${records[0].durationHours}h`;
+      byId("sleepHistory").innerHTML = records.map(sleepHistoryMarkup).join("");
+      drawSleepChart(records);
+    }
+
+    function sleepHistoryMarkup(item) {
+      const started = new Date(item.startedAt);
+      const ended = new Date(item.endedAt);
+      return `
+        <div class="history-item">
+          <div class="history-emoji" style="background:#d7e3ff">☾</div>
+          <div>
+            <strong>${item.durationHours}h sleep</strong>
+            <small>${ended.toLocaleDateString([], { weekday: "short", month: "short", day: "numeric" })} • ${formatClock(started)}-${formatClock(ended)}</small>
+          </div>
+          <span class="pill">${item.plannedBedtime || "--"}</span>
+        </div>
+      `;
+    }
+
+    function drawSleepChart(records) {
+      const canvas = byId("sleepDashboardChart");
+      if (!canvas) return;
+      const context = canvas.getContext("2d");
+      const scale = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+      const width = Math.max(280, Math.floor(rect.width));
+      const height = Math.max(150, Math.floor(rect.height));
+      canvas.width = width * scale;
+      canvas.height = height * scale;
+      context.setTransform(scale, 0, 0, scale, 0, 0);
+      context.clearRect(0, 0, width, height);
+      context.strokeStyle = "#d8d2cc";
+      context.lineWidth = 1;
+      context.beginPath();
+      context.moveTo(34, 12);
+      context.lineTo(34, height - 28);
+      context.lineTo(width - 8, height - 28);
+      context.stroke();
+      context.fillStyle = "#817b74";
+      context.font = "11px sans-serif";
+      context.fillText("10h", 6, 18);
+      context.fillText("0h", 12, height - 30);
+      if (!records.length) {
+        context.fillText("No data yet", 44, Math.round(height / 2));
+        return;
+      }
+      const plotted = records.slice(0, 14).reverse();
+      const maxHours = Math.max(10, ...plotted.map(item => item.durationHours));
+      const chartLeft = 42;
+      const chartRight = width - 12;
+      const chartBottom = height - 34;
+      const chartHeight = chartBottom - 16;
+      const barGap = 8;
+      const barWidth = Math.max(10, (chartRight - chartLeft - barGap * (plotted.length - 1)) / plotted.length);
+      plotted.forEach((item, index) => {
+        const x = chartLeft + index * (barWidth + barGap);
+        const barHeight = Math.max(3, (item.durationHours / maxHours) * chartHeight);
+        const y = chartBottom - barHeight;
+        context.fillStyle = item.durationHours >= 8 ? "#8dc8a2" : "#a8bff5";
+        context.fillRect(x, y, barWidth, barHeight);
+      });
+    }
+
+    function renderHomeDashboard() {
+      const entries = moodState.entries || [];
+      const completions = moodState.completions || [];
+      const scored = entries.map(wellbeingForEntry).filter(Boolean);
+      const avg = scored.length ? scored.reduce((sum, score) => sum + score, 0) / scored.length : null;
+      byId("homeMoodScore").textContent = avg ? avg.toFixed(1) : "--";
+      byId("homeMoodSmall").textContent = entries.length ? `${entries.length} check-ins • ${completions.length} activities` : "No check-ins yet";
+      const focusRemaining = Math.max(0, focusState.dailyLimit - focusState.screenTimeLogged);
+      byId("homeFocusRemaining").textContent = `${focusRemaining}m`;
+      byId("homeFocusSmall").textContent = `${focusState.screenTimeLogged}m logged • bank ${formatSeconds(focusState.bankSeconds)}`;
+      const latestSleep = sleepState.history && sleepState.history[0];
+      byId("homeSleepLatest").textContent = latestSleep ? `${latestSleep.durationHours}h` : "--";
+      byId("homeSleepSmall").textContent = latestSleep ? `${sleepState.history.length} wake-up check-ins` : "No wake-up check-ins yet";
+    }
+
+    function renderProfileDashboard() {
+      const entries = moodState.entries || [];
+      const completions = moodState.completions || [];
+      const scored = entries.map(wellbeingForEntry).filter(Boolean);
+      const avgWellbeing = scored.length ? scored.reduce((sum, score) => sum + score, 0) / scored.length : null;
+      const sleepRecords = sleepState.history || [];
+      const sleepAverage = sleepRecords.length ? sleepRecords.reduce((sum, item) => sum + item.durationHours, 0) / sleepRecords.length : null;
+      byId("dashCheckins").textContent = entries.length;
+      byId("dashStreak").textContent = `${calculateStreak(entries)}d`;
+      byId("dashActivities").textContent = completions.length;
+      byId("dashAverageWellbeing").textContent = avgWellbeing ? avgWellbeing.toFixed(1) : "--";
+      byId("dashSleepAverage").textContent = sleepAverage ? `${sleepAverage.toFixed(1)}h` : "--";
+      byId("dashBreakBank").textContent = formatSeconds(focusState.bankSeconds);
+      renderMoodTrend("profileMoodTrendChart", entries);
+      byId("profileMoodDetails").innerHTML = entries.length ? entries.slice(0, 12).map(moodHistoryMarkup).join("") : `<div class="empty">Mood details will appear after check-ins.</div>`;
+      const improved = completions.filter(item => item.outcome === "improved").length;
+      const stable = completions.filter(item => item.outcome === "stable").length;
+      const tryAnother = completions.filter(item => item.needsFollowUp).length;
+      byId("profileActivityOutcomes").innerHTML = `
+        <div class="metric-card" style="--metric-bg:#d5eadc"><span>Improved</span><strong>${improved}</strong></div>
+        <div class="metric-card" style="--metric-bg:#ffe4a3"><span>Stable</span><strong>${stable}</strong></div>
+        <div class="metric-card" style="--metric-bg:#ffd8d2"><span>Try another</span><strong>${tryAnother}</strong></div>
+        <div class="metric-card" style="--metric-bg:#ded5ff"><span>Total</span><strong>${completions.length}</strong></div>
+      `;
+      byId("profileActivityDetails").innerHTML = completions.length ? completions.slice(0, 10).map(activityHistoryMarkup).join("") : `<div class="empty">Activity outcomes will appear here.</div>`;
+      byId("profileSleepDetails").innerHTML = sleepRecords.length ? sleepRecords.map(sleepHistoryMarkup).join("") : `<div class="empty">Sleep history will appear after wake-up check-ins.</div>`;
+      byId("profileFocusSummary").innerHTML = `
+        <div class="history-item"><div class="history-emoji">◐</div><div><strong>${focusState.screenTimeLogged}/${focusState.dailyLimit}m today</strong><small>${getFocusMessage(Math.min(100, (focusState.screenTimeLogged / focusState.dailyLimit) * 100), Math.max(0, focusState.dailyLimit - focusState.screenTimeLogged))}</small></div><span class="pill">Screen</span></div>
+        <div class="history-item"><div class="history-emoji">◷</div><div><strong>${formatSeconds(focusState.bankSeconds)} break bank</strong><small>${focusState.streak} day focus streak</small></div><span class="pill">Focus</span></div>
+      `;
+    }
+
+    async function exportCombinedCsv() {
+      const entries = moodState.entries || [];
+      const completions = moodState.completions || [];
+      const rows = [
+        ["type", "createdAt", "session", "avatar", "mood", "intensity", "wellbeingScore", "activityTitle", "preWellbeing", "postMood", "postWellbeing", "outcome", "needsFollowUp", "sleepHours", "screenHours", "focusScreenLogged", "focusBreakBankSeconds", "sleepDurationHours", "plannedBedtime"]
+      ];
+      entries.forEach(entry => rows.push(["mood", entry.createdAt, entry.session, entry.avatar, entry.mood, entry.intensity, entry.wellbeingScore || "", "", "", "", "", "", "", entry.sleepHours || "", entry.screenHours || "", "", "", "", ""]));
+      completions.forEach(item => rows.push(["activity", item.createdAt, "", "", item.mood, item.postIntensity || "", "", item.activityTitle, item.preWellbeing || "", item.postMood || "", item.postWellbeing || "", item.outcome || "", item.needsFollowUp ? "yes" : "no", "", "", "", "", "", ""]));
+      rows.push(["focus", new Date().toISOString(), "", "", "", "", "", "", "", "", "", "", "", "", "", focusState.screenTimeLogged, focusState.bankSeconds, "", ""]);
+      (sleepState.history || []).forEach(item => rows.push(["sleep", new Date(item.endedAt).toISOString(), "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", item.durationHours, item.plannedBedtime || ""]));
+      const csv = rows.map(row => row.map(value => `"${String(value ?? "").replaceAll('"', '""')}"`).join(",")).join("\n");
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = `my-wellness-journey-local-data-${new Date().toISOString().slice(0, 10)}.csv`;
+      link.click();
+      URL.revokeObjectURL(link.href);
+    }
+
+    async function clearAllLocalData() {
+      if (!window.confirm("Clear all local mood, focus, and sleep records from this device?")) return;
+      await moodClearAllRecords();
+      localStorage.removeItem(FOCUS_STORAGE_KEY);
+      localStorage.removeItem(SLEEP_STORAGE_KEY);
+      moodState.lastMoodEntry = null;
+      moodState.selectedMood = "";
+      moodState.wellbeingScore = 5;
+      moodState.entries = [];
+      moodState.completions = [];
+      focusState = { streak: 12, bankSeconds: 1800, screenTimeLogged: 0, dailyLimit: FOCUS_DEFAULT_LIMIT, lastDate: new Date().toDateString(), lastLog: null };
+      sleepState = { bedtime: "22:30", activeSleep: null, history: [] };
+      persistFocusState();
+      persistSleepState();
+      setMoodSelection("");
+      renderScoreGrid("moodWellbeingGrid", "wellbeing", 5);
+      renderMoodActivities("calm");
+      renderFocusUi();
+      renderSleepUi();
+      await refreshMoodData();
+      appShowToast("Local data cleared.");
+    }
+
+    function bindEvents() {
+      document.querySelectorAll("[data-page]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          appShowPage(btn.dataset.page);
+          if (btn.dataset.moodTab) switchPanel("mood", btn.dataset.moodTab);
+          if (btn.dataset.focusTab) switchPanel("focus", btn.dataset.focusTab);
+          if (btn.dataset.sleepTab) switchPanel("sleep", btn.dataset.sleepTab);
+          if (btn.dataset.profileTab === "trends") switchPanel("profile", "profileTrendsPanel");
+        });
+      });
+      document.querySelectorAll("[data-tabs]").forEach(tabset => {
+        const group = tabset.dataset.tabs;
+        tabset.addEventListener("click", event => {
+          const btn = event.target.closest("[data-panel]");
+          if (btn) switchPanel(group, btn.dataset.panel);
+        });
+      });
+      document.querySelectorAll("[data-mood-session]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          moodState.session = btn.dataset.moodSession;
+          document.querySelectorAll("[data-mood-session]").forEach(item => item.classList.toggle("active", item === btn));
+          byId("moodNightExtras").classList.toggle("show", moodState.session === "Night");
+        });
+      });
+      byId("moodAvatarRow").addEventListener("click", event => {
+        const btn = event.target.closest("[data-avatar]");
+        if (btn) setMoodAvatar(btn.dataset.avatar);
+      });
+      byId("moodGrid").addEventListener("click", event => {
+        const btn = event.target.closest("[data-mood]");
+        if (btn) setMoodSelection(btn.dataset.mood);
+      });
+      byId("postMoodGrid").addEventListener("click", event => {
+        const btn = event.target.closest("[data-post-mood]");
+        if (btn) setPostMoodSelection(btn.dataset.postMood);
+      });
+      byId("moodWellbeingGrid").addEventListener("click", event => {
+        const btn = event.target.closest("[data-wellbeing]");
+        if (!btn) return;
+        moodState.wellbeingScore = Number(btn.dataset.wellbeing);
+        renderScoreGrid("moodWellbeingGrid", "wellbeing", moodState.wellbeingScore);
+      });
+      byId("postWellbeingGrid").addEventListener("click", event => {
+        const btn = event.target.closest("[data-post-wellbeing]");
+        if (!btn) return;
+        moodState.postWellbeing = Number(btn.dataset.postWellbeing);
+        renderScoreGrid("postWellbeingGrid", "post-wellbeing", moodState.postWellbeing);
+      });
+      byId("moodIntensityInput").addEventListener("input", event => byId("moodIntensityValue").textContent = event.target.value);
+      byId("postIntensityInput").addEventListener("input", event => byId("postIntensityValue").textContent = event.target.value);
+      byId("moodCheckinForm").addEventListener("submit", saveMoodCheckin);
+      byId("moodActivityTabs").addEventListener("click", event => {
+        const btn = event.target.closest("[data-activity-tab]");
+        if (!btn) return;
+        moodState.activityTab = btn.dataset.activityTab;
+        document.querySelectorAll("[data-activity-tab]").forEach(item => item.classList.toggle("active", item === btn));
+        renderMoodActivities(moodState.lastMoodEntry ? moodState.lastMoodEntry.mood : moodState.selectedMood);
+      });
+      byId("moodActivityGrid").addEventListener("click", event => {
+        const btn = event.target.closest("[data-activity]");
+        if (btn) openActivityTimer(btn.dataset.activity);
+      });
+      byId("startTimerBtn").addEventListener("click", startActivityTimer);
+      byId("openPostCheckBtn").addEventListener("click", openPostActivityCheck);
+      byId("cancelActivityBtn").addEventListener("click", () => {
+        window.clearInterval(moodState.timerId);
+        moodState.timerId = null;
+        moodState.activeActivity = null;
+        byId("moodTimerPanel").classList.remove("show");
+      });
+      byId("savePostCheckBtn").addEventListener("click", savePostActivityCheck);
+      byId("cancelPostCheckBtn").addEventListener("click", () => byId("postActivityPanel").classList.remove("show"));
+
+      document.querySelectorAll("[data-focus-category]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          focusActiveCategory = btn.dataset.focusCategory;
+          document.querySelectorAll("[data-focus-category]").forEach(item => item.classList.toggle("active", item === btn));
+        });
+      });
+      byId("focusSlider").addEventListener("input", event => byId("focusSliderValue").textContent = `${event.target.value} mins`);
+      document.querySelectorAll("[data-focus-mins]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          byId("focusSlider").value = btn.dataset.focusMins;
+          byId("focusSliderValue").textContent = `${btn.dataset.focusMins} mins`;
+        });
+      });
+      byId("focusSaveLogBtn").addEventListener("click", submitFocusLog);
+      byId("focusUndoBtn").addEventListener("click", undoFocusLog);
+      byId("focusTimerBtn").addEventListener("click", toggleFocusTimer);
+      byId("focusResetBtn").addEventListener("click", resetFocusTimer);
+      document.querySelectorAll("[data-focus-limit-action]").forEach(btn => btn.addEventListener("click", () => handleFocusLimit(btn.dataset.focusLimitAction)));
+
+      byId("sleepBedtime").addEventListener("change", event => {
+        sleepState.bedtime = event.target.value || "22:30";
+        persistSleepState();
+        renderSleepUi();
+      });
+      byId("sleepPlayVideoBtn").addEventListener("click", playSleepVideo);
+      byId("sleepStartBtn").addEventListener("click", startSleep);
+      byId("sleepWakeBtn").addEventListener("click", wakeSleep);
+      window.addEventListener("resize", renderSleepDashboard);
+      sleepClockInterval = window.setInterval(() => {
+        if (sleepState.activeSleep) renderSleepUi();
+      }, 60000);
+
+      byId("exportBtn").addEventListener("click", exportCombinedCsv);
+      byId("clearBtn").addEventListener("click", clearAllLocalData);
+    }
+
+    async function init() {
+      renderCalendar();
+      renderMoodChoices();
+      bindEvents();
+      setMoodAvatar(moodState.avatar);
+      loadFocusState();
+      loadSleepState();
+      moodDb = await openMoodDb();
+      renderFocusUi();
+      renderSleepUi();
+      renderMoodActivities("calm");
+      await refreshMoodData();
+    }
+
+    init().catch(error => {
+      console.error(error);
+      appShowToast("The app could not start local storage in this browser.");
+    });
+  </script>
+</body>
+</html>

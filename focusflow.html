@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FocusFlow | Calm Screen Balance</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+        :root {
+            --bg: #f6f3ed;
+            --bg-soft: #eef6f0;
+            --surface: rgba(255, 255, 255, 0.88);
+            --surface-strong: #ffffff;
+            --ink: #17211d;
+            --muted: #69746d;
+            --line: rgba(31, 45, 38, 0.1);
+            --sage: #7ea38d;
+            --sage-dark: #476b58;
+            --clay: #d68a6a;
+            --sun: #e8b75d;
+            --blue: #6c8faf;
+            --danger: #c75c63;
+            --shadow: 0 18px 50px rgba(65, 76, 69, 0.12);
+            --shadow-soft: 0 8px 24px rgba(65, 76, 69, 0.08);
+            --radius-lg: 28px;
+            --radius-md: 18px;
+            --radius-sm: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: "Plus Jakarta Sans", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            min-height: 100vh;
+            color: var(--ink);
+            background:
+                linear-gradient(160deg, rgba(126, 163, 141, 0.2), transparent 34%),
+                linear-gradient(20deg, rgba(214, 138, 106, 0.16), transparent 38%),
+                var(--bg);
+            overflow-x: hidden;
+        }
+
+        button, input {
+            font: inherit;
+        }
+
+        button {
+            border: 0;
+            cursor: pointer;
+        }
+
+        .app-container {
+            width: min(100%, 480px);
+            min-height: 100vh;
+            margin: 0 auto;
+            padding: 18px 16px 96px;
+            position: relative;
+        }
+
+        #toast-container {
+            position: fixed;
+            top: 18px;
+            left: 50%;
+            z-index: 2000;
+            width: min(90vw, 420px);
+            display: grid;
+            gap: 10px;
+            pointer-events: none;
+            transform: translateX(-50%);
+        }
+
+        .toast {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            color: #ffffff;
+            background: rgba(23, 33, 29, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 18px;
+            box-shadow: var(--shadow-soft);
+            backdrop-filter: blur(18px);
+            font-size: 0.92rem;
+            font-weight: 700;
+            animation: toastIn 0.25s ease forwards;
+        }
+
+        .toast-icon {
+            min-width: 36px;
+            height: 28px;
+            padding: 0 8px;
+            display: grid;
+            place-items: center;
+            flex: 0 0 auto;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.14);
+            font-size: 0.72rem;
+            font-weight: 800;
+        }
+
+        @keyframes toastIn {
+            from { opacity: 0; transform: translateY(-12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero {
+            position: relative;
+            overflow: hidden;
+            min-height: 246px;
+            padding: 26px 22px;
+            border-radius: 32px;
+            color: #fdfbf6;
+            background:
+                linear-gradient(135deg, rgba(43, 72, 57, 0.96), rgba(88, 123, 103, 0.94)),
+                url("https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1000&q=80") center/cover;
+            background-blend-mode: multiply;
+            box-shadow: var(--shadow);
+        }
+
+        .hero::after {
+            content: "";
+            position: absolute;
+            inset: auto 0 0;
+            height: 44%;
+            background: linear-gradient(transparent, rgba(15, 24, 20, 0.34));
+            pointer-events: none;
+        }
+
+        .hero-top,
+        .hero-copy,
+        .hero-stats {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .brand-mark {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.16);
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            backdrop-filter: blur(14px);
+            font-size: 0.78rem;
+            font-weight: 800;
+            letter-spacing: 0;
+        }
+
+        .day-chip {
+            text-align: right;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.82);
+        }
+
+        .hero-copy {
+            margin-top: 34px;
+            max-width: 330px;
+        }
+
+        .hero-copy h1 {
+            font-size: clamp(2rem, 8vw, 3rem);
+            line-height: 1;
+            letter-spacing: 0;
+        }
+
+        .hero-copy p {
+            margin-top: 12px;
+            color: rgba(255, 255, 255, 0.82);
+            font-size: 0.95rem;
+            line-height: 1.55;
+            font-weight: 600;
+        }
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 24px;
+        }
+
+        .stat-tile {
+            padding: 14px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.14);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            backdrop-filter: blur(16px);
+        }
+
+        .stat-label {
+            display: block;
+            color: rgba(255, 255, 255, 0.72);
+            font-size: 0.74rem;
+            font-weight: 700;
+        }
+
+        .stat-value {
+            display: block;
+            margin-top: 4px;
+            color: #ffffff;
+            font-size: 1.38rem;
+            line-height: 1;
+            font-weight: 800;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .view {
+            display: none;
+            padding-top: 16px;
+            animation: fadeIn 0.32s ease;
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .panel {
+            padding: 22px;
+            margin-bottom: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            border-radius: var(--radius-lg);
+            background: var(--surface);
+            box-shadow: var(--shadow-soft);
+            backdrop-filter: blur(20px);
+        }
+
+        .section-head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+
+        .eyebrow {
+            color: var(--sage-dark);
+            font-size: 0.72rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .section-head h2 {
+            margin-top: 4px;
+            font-size: 1.28rem;
+            line-height: 1.15;
+            letter-spacing: 0;
+        }
+
+        .limit-pill {
+            flex: 0 0 auto;
+            padding: 8px 11px;
+            border-radius: 999px;
+            color: var(--sage-dark);
+            background: rgba(126, 163, 141, 0.14);
+            font-size: 0.78rem;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .progress-layout {
+            display: grid;
+            grid-template-columns: 158px 1fr;
+            gap: 18px;
+            align-items: center;
+        }
+
+        .donut-chart {
+            width: 158px;
+            height: 158px;
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+            background: conic-gradient(var(--sage) var(--progress), rgba(126, 163, 141, 0.13) 0deg);
+            box-shadow: inset 0 0 0 14px rgba(255, 255, 255, 0.8);
+            transition: background 0.5s ease;
+        }
+
+        .donut-inner {
+            width: 112px;
+            height: 112px;
+            display: grid;
+            place-items: center;
+            align-content: center;
+            text-align: center;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.94);
+            box-shadow: inset 0 0 0 1px rgba(31, 45, 38, 0.06);
+        }
+
+        .donut-inner h3 {
+            font-size: 1.55rem;
+            line-height: 1;
+            font-weight: 800;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .donut-inner span {
+            margin-top: 6px;
+            color: var(--muted);
+            font-size: 0.72rem;
+            font-weight: 700;
+        }
+
+        .status-copy {
+            display: grid;
+            gap: 12px;
+        }
+
+        .status-card {
+            padding: 13px 14px;
+            border: 1px solid var(--line);
+            border-radius: var(--radius-md);
+            background: rgba(255, 255, 255, 0.54);
+        }
+
+        .status-card strong {
+            display: block;
+            font-size: 1.24rem;
+            line-height: 1;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .status-card span {
+            display: block;
+            margin-top: 5px;
+            color: var(--muted);
+            font-size: 0.78rem;
+            font-weight: 700;
+        }
+
+        .calm-note {
+            color: var(--muted);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            font-weight: 600;
+        }
+
+        .log-sheet {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--line);
+        }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 9px;
+            margin: 14px 0 18px;
+        }
+
+        .log-cat {
+            min-height: 78px;
+            padding: 12px 8px;
+            border: 1px solid var(--line);
+            border-radius: var(--radius-md);
+            color: var(--muted);
+            background: rgba(255, 255, 255, 0.64);
+            transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease, color 0.18s ease;
+        }
+
+        .log-cat .cat-icon {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 1.28rem;
+        }
+
+        .log-cat .cat-label {
+            display: block;
+            font-size: 0.78rem;
+            font-weight: 800;
+        }
+
+        .log-cat.active {
+            color: var(--sage-dark);
+            border-color: rgba(71, 107, 88, 0.38);
+            background: rgba(126, 163, 141, 0.16);
+            box-shadow: inset 0 0 0 1px rgba(71, 107, 88, 0.12);
+        }
+
+        .log-cat:active,
+        .btn:active,
+        .btn-quick:active,
+        .nav-item:active,
+        .action-btn:active {
+            transform: scale(0.98);
+        }
+
+        .slider-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 10px;
+        }
+
+        .slider-row strong {
+            font-size: 1.16rem;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .slider-row span {
+            color: var(--muted);
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 34px;
+            accent-color: var(--sage-dark);
+            cursor: pointer;
+        }
+
+        .quick-add {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 9px;
+            margin: 12px 0 16px;
+        }
+
+        .btn-quick {
+            padding: 12px 8px;
+            border-radius: 999px;
+            color: var(--ink);
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid var(--line);
+            font-size: 0.86rem;
+            font-weight: 800;
+            transition: transform 0.18s ease, background 0.18s ease;
+        }
+
+        .btn {
+            width: 100%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            min-height: 56px;
+            padding: 16px 18px;
+            border-radius: 18px;
+            font-size: 1rem;
+            font-weight: 800;
+            transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+        }
+
+        .btn-log {
+            color: #ffffff;
+            background: var(--sage-dark);
+            box-shadow: 0 12px 24px rgba(71, 107, 88, 0.22);
+        }
+
+        .btn-study {
+            color: #ffffff;
+            background: var(--sage-dark);
+            box-shadow: 0 12px 24px rgba(71, 107, 88, 0.22);
+        }
+
+        .btn-secondary {
+            margin-top: 10px;
+            color: var(--muted);
+            background: transparent;
+            font-size: 0.9rem;
+            font-weight: 800;
+            box-shadow: none;
+        }
+
+        .undo-row {
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-top: 14px;
+            padding: 12px 14px;
+            border-radius: var(--radius-md);
+            color: var(--muted);
+            background: rgba(108, 143, 175, 0.1);
+            font-size: 0.82rem;
+            font-weight: 700;
+        }
+
+        .undo-row.show {
+            display: flex;
+        }
+
+        .undo-row button {
+            color: var(--blue);
+            background: transparent;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .focus-panel {
+            text-align: center;
+        }
+
+        .timer-wrap {
+            position: relative;
+            width: min(74vw, 268px);
+            aspect-ratio: 1;
+            display: grid;
+            place-items: center;
+            margin: 8px auto 22px;
+            border-radius: 50%;
+            background:
+                radial-gradient(circle at center, rgba(255, 255, 255, 0.95) 0 58%, transparent 59%),
+                conic-gradient(var(--sage) var(--timer-progress), rgba(126, 163, 141, 0.14) 0deg);
+            box-shadow: var(--shadow-soft);
+            transition: background 0.5s ease;
+        }
+
+        .timer-core {
+            width: 72%;
+            height: 72%;
+            display: grid;
+            place-items: center;
+            align-content: center;
+            border-radius: 50%;
+            background: var(--surface-strong);
+            border: 1px solid var(--line);
+        }
+
+        .timer-val {
+            color: var(--sage-dark);
+            font-size: clamp(3rem, 15vw, 4.2rem);
+            line-height: 1;
+            font-weight: 800;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: 0;
+        }
+
+        .timer-label {
+            margin-top: 10px;
+            color: var(--muted);
+            font-size: 0.78rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .breath-strip {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 9px;
+            margin: 20px 0;
+        }
+
+        .breath-item {
+            padding: 12px 8px;
+            border-radius: var(--radius-md);
+            color: var(--muted);
+            background: rgba(255, 255, 255, 0.58);
+            border: 1px solid var(--line);
+            font-size: 0.78rem;
+            font-weight: 800;
+        }
+
+        .overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            display: none;
+            align-items: end;
+            justify-content: center;
+            padding: 20px 16px;
+            background: rgba(23, 33, 29, 0.42);
+            backdrop-filter: blur(12px);
+            opacity: 0;
+            transition: opacity 0.28s ease;
+        }
+
+        .overlay.show {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal {
+            width: min(100%, 420px);
+            padding: 24px;
+            border-radius: 30px;
+            background: #fffdf8;
+            box-shadow: 0 28px 70px rgba(23, 33, 29, 0.28);
+            transform: translateY(22px);
+            transition: transform 0.28s ease;
+        }
+
+        .overlay.show .modal {
+            transform: translateY(0);
+        }
+
+        .modal-mark {
+            width: 48px;
+            height: 48px;
+            display: grid;
+            place-items: center;
+            margin-bottom: 14px;
+            border-radius: 16px;
+            background: rgba(214, 138, 106, 0.18);
+            font-size: 1.5rem;
+        }
+
+        .modal h2 {
+            font-size: 1.45rem;
+            line-height: 1.15;
+            letter-spacing: 0;
+        }
+
+        .modal p {
+            margin: 10px 0 18px;
+            color: var(--muted);
+            font-size: 0.94rem;
+            line-height: 1.5;
+            font-weight: 600;
+        }
+
+        .action-btn {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 15px;
+            margin-top: 10px;
+            border-radius: 18px;
+            text-align: left;
+            transition: transform 0.18s ease;
+        }
+
+        .action-btn strong {
+            display: block;
+            font-size: 0.96rem;
+        }
+
+        .action-btn span {
+            display: block;
+            margin-top: 3px;
+            font-size: 0.76rem;
+            font-weight: 700;
+            opacity: 0.78;
+        }
+
+        .btn-save {
+            color: #ffffff;
+            background: var(--sage-dark);
+        }
+
+        .btn-spend {
+            color: #3d2d0f;
+            background: rgba(232, 183, 93, 0.82);
+        }
+
+        .btn-ignore {
+            color: var(--danger);
+            background: rgba(199, 92, 99, 0.09);
+        }
+
+        .bottom-nav {
+            position: fixed;
+            left: 50%;
+            bottom: 14px;
+            z-index: 100;
+            width: min(calc(100% - 28px), 452px);
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            padding: 8px;
+            border-radius: 24px;
+            background: rgba(255, 255, 255, 0.78);
+            border: 1px solid rgba(255, 255, 255, 0.72);
+            box-shadow: var(--shadow-soft);
+            backdrop-filter: blur(22px);
+            transform: translateX(-50%);
+        }
+
+        .nav-item {
+            min-height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            border-radius: 18px;
+            color: var(--muted);
+            background: transparent;
+            font-size: 0.86rem;
+            font-weight: 800;
+            transition: transform 0.18s ease, background 0.18s ease, color 0.18s ease;
+        }
+
+        .nav-item.active {
+            color: var(--sage-dark);
+            background: rgba(126, 163, 141, 0.16);
+        }
+
+        .nav-icon {
+            font-size: 1.1rem;
+            line-height: 1;
+        }
+
+        @media (max-width: 390px) {
+            .app-container {
+                padding-inline: 12px;
+            }
+
+            .hero {
+                padding: 22px 18px;
+            }
+
+            .progress-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .donut-chart {
+                margin: 0 auto;
+            }
+
+            .category-grid,
+            .quick-add,
+            .breath-strip {
+                gap: 7px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="app-container">
+        <div id="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+        <section class="hero" aria-label="FocusFlow overview">
+            <div class="hero-top">
+                <div class="brand-mark">FocusFlow</div>
+                <div class="day-chip" id="today-label">Today</div>
+            </div>
+
+            <div class="hero-copy">
+                <h1>Steady focus, softer breaks.</h1>
+                <p>Log screen time honestly, protect your study rhythm, and earn intentional rest.</p>
+            </div>
+
+            <div class="hero-stats">
+                <div class="stat-tile">
+                    <span class="stat-label">Streak</span>
+                    <span class="stat-value"><span id="streak-val">0</span> days</span>
+                </div>
+                <div class="stat-tile">
+                    <span class="stat-label">Break bank</span>
+                    <span class="stat-value" id="bank-val">00:00</span>
+                </div>
+            </div>
+        </section>
+
+        <section id="tracker" class="view active" aria-label="Screen time tracker">
+            <div class="panel">
+                <div class="section-head">
+                    <div>
+                        <div class="eyebrow">Screen balance</div>
+                        <h2>Today’s screen time</h2>
+                    </div>
+                    <div class="limit-pill"><span id="st-total">0</span>/<span id="limit-total">120</span>m</div>
+                </div>
+
+                <div class="progress-layout">
+                    <div class="donut-chart" id="st-chart" style="--progress: 0%;">
+                        <div class="donut-inner">
+                            <h3 id="st-big-num">0m</h3>
+                            <span>logged</span>
+                        </div>
+                    </div>
+
+                    <div class="status-copy">
+                        <div class="status-card">
+                            <strong id="remaining-val">120m</strong>
+                            <span>remaining before your limit</span>
+                        </div>
+                        <p class="calm-note" id="screen-message">A gentle start. Keep your next check-in short and clear.</p>
+                    </div>
+                </div>
+
+                <div class="log-sheet">
+                    <div class="eyebrow">Add activity</div>
+                    <div class="category-grid" role="group" aria-label="Activity category">
+                        <button class="log-cat active" type="button" data-category="Social">
+                            <span class="cat-icon" aria-hidden="true">📱</span>
+                            <span class="cat-label">Social</span>
+                        </button>
+                        <button class="log-cat" type="button" data-category="Gaming">
+                            <span class="cat-icon" aria-hidden="true">🎮</span>
+                            <span class="cat-label">Games</span>
+                        </button>
+                        <button class="log-cat" type="button" data-category="Video">
+                            <span class="cat-icon" aria-hidden="true">▶</span>
+                            <span class="cat-label">Video</span>
+                        </button>
+                    </div>
+
+                    <div class="slider-row">
+                        <strong id="slider-val">15 mins</strong>
+                        <span>5-120 minutes</span>
+                    </div>
+                    <input type="range" id="st-slider" min="5" max="120" step="5" value="15" aria-label="Minutes to log">
+
+                    <div class="quick-add">
+                        <button class="btn-quick" type="button" data-mins="15">15m</button>
+                        <button class="btn-quick" type="button" data-mins="30">30m</button>
+                        <button class="btn-quick" type="button" data-mins="60">60m</button>
+                    </div>
+
+                    <button class="btn btn-log" type="button" id="save-log-btn">Log activity</button>
+
+                    <div class="undo-row" id="undo-row">
+                        <span id="undo-text">Last log saved.</span>
+                        <button type="button" id="undo-btn">Undo</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="focus" class="view" aria-label="Focus timer">
+            <div class="panel focus-panel">
+                <div class="section-head">
+                    <div>
+                        <div class="eyebrow">Focus session</div>
+                        <h2>Settle into one task</h2>
+                    </div>
+                    <div class="limit-pill">+5m rest</div>
+                </div>
+
+                <div class="timer-wrap" id="timer-ring" style="--timer-progress: 0%;">
+                    <div class="timer-core">
+                        <div class="timer-val" id="study-clock">25:00</div>
+                        <div class="timer-label" id="timer-state">Ready</div>
+                    </div>
+                </div>
+
+                <p class="calm-note">A completed focus session adds five minutes to your break bank.</p>
+
+                <div class="breath-strip" aria-label="Focus rhythm">
+                    <div class="breath-item">Arrive</div>
+                    <div class="breath-item">Study</div>
+                    <div class="breath-item">Recover</div>
+                </div>
+
+                <button class="btn btn-study" type="button" id="timer-btn">Start focus</button>
+                <button class="btn btn-secondary" type="button" id="reset-btn">Reset timer</button>
+            </div>
+        </section>
+
+        <div class="overlay" id="alert-overlay" role="dialog" aria-modal="true" aria-labelledby="limit-title">
+            <div class="modal">
+                <div class="modal-mark" aria-hidden="true">II</div>
+                <h2 id="limit-title">You’ve reached today’s screen limit</h2>
+                <p>Take a quiet reset, spend earned break time, or continue with the streak paused for today.</p>
+
+                <button class="action-btn btn-save" type="button" data-action="save">
+                    <span>
+                        <strong>Close apps and reset</strong>
+                        <span>Keeps your streak steady</span>
+                    </span>
+                    <span aria-hidden="true">Done</span>
+                </button>
+
+                <button class="action-btn btn-spend" type="button" data-action="spend">
+                    <span>
+                        <strong>Use 15m break bank</strong>
+                        <span id="modal-bank-info">Available: 00:00</span>
+                    </span>
+                    <span aria-hidden="true">Use</span>
+                </button>
+
+                <button class="action-btn btn-ignore" type="button" data-action="ignore">
+                    <span>
+                        <strong>Continue for today</strong>
+                        <span>Resets the streak to 0</span>
+                    </span>
+                    <span aria-hidden="true">Continue</span>
+                </button>
+            </div>
+        </div>
+
+        <nav class="bottom-nav" aria-label="Primary">
+            <button class="nav-item active" type="button" data-tab="tracker">
+                <span class="nav-icon" aria-hidden="true">◐</span>
+                <span>Balance</span>
+            </button>
+            <button class="nav-item" type="button" data-tab="focus">
+                <span class="nav-icon" aria-hidden="true">◷</span>
+                <span>Study</span>
+            </button>
+        </nav>
+    </main>
+
+    <script>
+        const STORAGE_KEY = "focusFlowV6";
+        const DEFAULT_LIMIT = 120;
+        const FOCUS_SECONDS = 1500;
+
+        let state = {
+            streak: 12,
+            bankSeconds: 1800,
+            screenTimeLogged: 0,
+            dailyLimit: DEFAULT_LIMIT,
+            lastDate: "",
+            lastLog: null
+        };
+
+        let activeCategory = "Social";
+        let timerInterval = null;
+        let isTimerRunning = false;
+        let timerSeconds = FOCUS_SECONDS;
+
+        const els = {};
+
+        window.addEventListener("DOMContentLoaded", () => {
+            cacheElements();
+            loadState();
+            bindEvents();
+            updateSliderVal();
+            updateUI();
+        });
+
+        function cacheElements() {
+            els.toastContainer = document.getElementById("toast-container");
+            els.todayLabel = document.getElementById("today-label");
+            els.streakVal = document.getElementById("streak-val");
+            els.bankVal = document.getElementById("bank-val");
+            els.stTotal = document.getElementById("st-total");
+            els.limitTotal = document.getElementById("limit-total");
+            els.stBigNum = document.getElementById("st-big-num");
+            els.stChart = document.getElementById("st-chart");
+            els.remainingVal = document.getElementById("remaining-val");
+            els.screenMessage = document.getElementById("screen-message");
+            els.slider = document.getElementById("st-slider");
+            els.sliderVal = document.getElementById("slider-val");
+            els.saveLogBtn = document.getElementById("save-log-btn");
+            els.undoRow = document.getElementById("undo-row");
+            els.undoText = document.getElementById("undo-text");
+            els.undoBtn = document.getElementById("undo-btn");
+            els.alertOverlay = document.getElementById("alert-overlay");
+            els.modalBankInfo = document.getElementById("modal-bank-info");
+            els.studyClock = document.getElementById("study-clock");
+            els.timerBtn = document.getElementById("timer-btn");
+            els.resetBtn = document.getElementById("reset-btn");
+            els.timerRing = document.getElementById("timer-ring");
+            els.timerState = document.getElementById("timer-state");
+        }
+
+        function loadState() {
+            const saved = localStorage.getItem(STORAGE_KEY) || localStorage.getItem("focusFlowV5");
+            if (saved) {
+                try {
+                    state = { ...state, ...JSON.parse(saved) };
+                } catch {
+                    showToast("Saved data could not be loaded. Starting fresh.", "Note");
+                }
+            }
+
+            const today = new Date().toDateString();
+            if (state.lastDate !== today) {
+                state.screenTimeLogged = 0;
+                state.dailyLimit = DEFAULT_LIMIT;
+                state.lastDate = today;
+                state.lastLog = null;
+                state.streak += 1;
+                persistState();
+            }
+
+            els.todayLabel.textContent = new Intl.DateTimeFormat(undefined, {
+                weekday: "long",
+                month: "short",
+                day: "numeric"
+            }).format(new Date());
+        }
+
+        function bindEvents() {
+            document.querySelectorAll(".log-cat").forEach((button) => {
+                button.addEventListener("click", () => setLogCat(button.dataset.category, button));
+            });
+
+            document.querySelectorAll(".btn-quick").forEach((button) => {
+                button.addEventListener("click", () => quickLog(Number(button.dataset.mins)));
+            });
+
+            document.querySelectorAll(".nav-item").forEach((button) => {
+                button.addEventListener("click", () => switchTab(button.dataset.tab, button));
+            });
+
+            document.querySelectorAll(".action-btn").forEach((button) => {
+                button.addEventListener("click", () => handleAlert(button.dataset.action));
+            });
+
+            els.slider.addEventListener("input", updateSliderVal);
+            els.saveLogBtn.addEventListener("click", submitLog);
+            els.undoBtn.addEventListener("click", undoLastLog);
+            els.timerBtn.addEventListener("click", toggleTimer);
+            els.resetBtn.addEventListener("click", resetTimer);
+        }
+
+        function persistState() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        }
+
+        function saveState() {
+            persistState();
+            updateUI();
+        }
+
+        function showToast(message, label = "OK") {
+            const toast = document.createElement("div");
+            toast.className = "toast";
+            toast.innerHTML = `<span class="toast-icon">${label}</span><span>${message}</span>`;
+            els.toastContainer.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.opacity = "0";
+                toast.style.transform = "translateY(-10px)";
+                toast.style.transition = "all 0.25s ease";
+                setTimeout(() => toast.remove(), 260);
+            }, 2600);
+        }
+
+        function setLogCat(category, selectedButton) {
+            activeCategory = category;
+            document.querySelectorAll(".log-cat").forEach((button) => button.classList.remove("active"));
+            selectedButton.classList.add("active");
+        }
+
+        function updateSliderVal() {
+            const val = Number(els.slider.value);
+            els.sliderVal.textContent = `${val} ${val === 1 ? "min" : "mins"}`;
+        }
+
+        function quickLog(mins) {
+            els.slider.value = mins;
+            updateSliderVal();
+        }
+
+        function submitLog() {
+            const mins = Number(els.slider.value);
+            state.screenTimeLogged += mins;
+            state.lastLog = { mins, category: activeCategory };
+
+            showToast(`Logged ${mins}m of ${activeCategory.toLowerCase()} time.`, "Log");
+            saveState();
+
+            if (state.screenTimeLogged >= state.dailyLimit) {
+                setTimeout(triggerLimitAlert, 550);
+            }
+        }
+
+        function undoLastLog() {
+            if (!state.lastLog) return;
+
+            state.screenTimeLogged = Math.max(0, state.screenTimeLogged - state.lastLog.mins);
+            showToast(`Removed ${state.lastLog.mins}m from today.`, "Undo");
+            state.lastLog = null;
+            saveState();
+        }
+
+        function updateUI() {
+            const remaining = Math.max(0, state.dailyLimit - state.screenTimeLogged);
+            const percent = Math.min(100, (state.screenTimeLogged / state.dailyLimit) * 100);
+            const chartColor = getProgressColor(percent);
+            const trackColor = getTrackColor(percent);
+
+            els.streakVal.textContent = state.streak;
+            els.bankVal.textContent = formatTime(state.bankSeconds);
+            els.stTotal.textContent = state.screenTimeLogged;
+            els.limitTotal.textContent = state.dailyLimit;
+            els.stBigNum.textContent = formatMinutes(state.screenTimeLogged);
+            els.remainingVal.textContent = `${remaining}m`;
+            els.screenMessage.textContent = getScreenMessage(percent, remaining);
+            els.stChart.style.background = `conic-gradient(${chartColor} ${percent}%, ${trackColor} 0deg)`;
+
+            if (state.lastLog) {
+                els.undoText.textContent = `${state.lastLog.mins}m ${state.lastLog.category.toLowerCase()} log saved.`;
+                els.undoRow.classList.add("show");
+            } else {
+                els.undoRow.classList.remove("show");
+            }
+
+            updateTimerUI();
+        }
+
+        function getProgressColor(percent) {
+            if (percent >= 100) return "var(--danger)";
+            if (percent >= 75) return "var(--clay)";
+            if (percent >= 50) return "var(--sun)";
+            return "var(--sage)";
+        }
+
+        function getTrackColor(percent) {
+            if (percent >= 100) return "rgba(199, 92, 99, 0.14)";
+            if (percent >= 75) return "rgba(214, 138, 106, 0.14)";
+            return "rgba(126, 163, 141, 0.13)";
+        }
+
+        function getScreenMessage(percent, remaining) {
+            if (percent >= 100) return "You have enough information now. Choose the next step with care.";
+            if (percent >= 75) return `${remaining}m left. A short pause now will make the rest of the day easier.`;
+            if (percent >= 50) return "Halfway through the allowance. This is a good moment to reset your attention.";
+            if (percent > 0) return "You are still comfortably within range. Keep the next session intentional.";
+            return "A quiet start. Log only what you need, then return to the day.";
+        }
+
+        function triggerLimitAlert() {
+            els.modalBankInfo.textContent = `Available: ${formatTime(state.bankSeconds)}`;
+            els.alertOverlay.classList.add("show");
+        }
+
+        function handleAlert(action) {
+            els.alertOverlay.classList.remove("show");
+
+            setTimeout(() => {
+                if (action === "save") {
+                    showToast("Good reset. Step away and let your eyes rest.", "Rest");
+                }
+
+                if (action === "spend") {
+                    if (state.bankSeconds < 900) {
+                        showToast("You need 15m in the bank first.", "Wait");
+                        setTimeout(triggerLimitAlert, 450);
+                        return;
+                    }
+
+                    state.bankSeconds -= 900;
+                    state.dailyLimit += 15;
+                    showToast("Used 15m from your break bank.", "Use");
+                }
+
+                if (action === "ignore") {
+                    state.streak = 0;
+                    state.dailyLimit += DEFAULT_LIMIT;
+                    showToast("Streak reset. The app will stay quiet for today.", "OK");
+                }
+
+                saveState();
+            }, 250);
+        }
+
+        function toggleTimer() {
+            if (!isTimerRunning) {
+                isTimerRunning = true;
+                els.timerBtn.textContent = "Pause focus";
+                els.timerState.textContent = "In progress";
+                showToast("Focus started. One task, one breath.", "Start");
+
+                timerInterval = setInterval(() => {
+                    timerSeconds -= 1;
+                    updateTimerUI();
+
+                    if (timerSeconds <= 0) {
+                        clearInterval(timerInterval);
+                        timerFinished();
+                    }
+                }, 1000);
+                return;
+            }
+
+            clearInterval(timerInterval);
+            isTimerRunning = false;
+            els.timerBtn.textContent = "Resume focus";
+            els.timerState.textContent = "Paused";
+            updateTimerUI();
+        }
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            isTimerRunning = false;
+            timerSeconds = FOCUS_SECONDS;
+            els.timerBtn.textContent = "Start focus";
+            els.timerState.textContent = "Ready";
+            updateTimerUI();
+        }
+
+        function timerFinished() {
+            state.bankSeconds += 300;
+            isTimerRunning = false;
+            resetTimer();
+            saveState();
+            showToast("Session complete. Added 5m to your break bank.", "Done");
+        }
+
+        function updateTimerUI() {
+            const elapsed = FOCUS_SECONDS - timerSeconds;
+            const percent = Math.max(0, Math.min(100, (elapsed / FOCUS_SECONDS) * 100));
+            els.studyClock.textContent = formatTime(timerSeconds);
+            els.timerRing.style.background = `
+                radial-gradient(circle at center, rgba(255, 255, 255, 0.95) 0 58%, transparent 59%),
+                conic-gradient(var(--sage) ${percent}%, rgba(126, 163, 141, 0.14) 0deg)
+            `;
+        }
+
+        function switchTab(tabId, selectedButton) {
+            document.querySelectorAll(".view").forEach((view) => view.classList.remove("active"));
+            document.querySelectorAll(".nav-item").forEach((item) => item.classList.remove("active"));
+            document.getElementById(tabId).classList.add("active");
+            selectedButton.classList.add("active");
+        }
+
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+        }
+
+        function formatMinutes(totalMinutes) {
+            const hours = Math.floor(totalMinutes / 60);
+            const mins = totalMinutes % 60;
+            if (hours === 0) return `${mins}m`;
+            if (mins === 0) return `${hours}h`;
+            return `${hours}h ${mins}m`;
+        }
+    </script>
+</body>
+</html>

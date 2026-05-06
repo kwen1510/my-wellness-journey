@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sleep Check-In</title>
+    <style>
+        :root {
+            --bg: #10141f;
+            --panel: #181f2f;
+            --panel-soft: #20293d;
+            --text: #f7f8fb;
+            --muted: #a8b2c5;
+            --line: rgba(255, 255, 255, 0.1);
+            --primary: #5b8cff;
+            --primary-dark: #3f6ee8;
+            --accent: #2dd4bf;
+            --warning: #f59e0b;
+            --danger: #f87171;
+            --shadow: 0 18px 45px rgba(0, 0, 0, 0.28);
+        }
+
+        .theme-day {
+            --bg: #f7f9fc;
+            --panel: #ffffff;
+            --panel-soft: #eef3f9;
+            --text: #162033;
+            --muted: #61708a;
+            --line: rgba(22, 32, 51, 0.12);
+            --shadow: 0 14px 34px rgba(30, 42, 70, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            margin: 0;
+            background:
+                radial-gradient(circle at top left, rgba(91, 140, 255, 0.18), transparent 32rem),
+                var(--bg);
+            color: var(--text);
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            display: flex;
+            justify-content: center;
+            transition: background-color 0.4s ease, color 0.4s ease;
+        }
+
+        main {
+            width: min(100%, 520px);
+            padding: 20px;
+        }
+
+        header {
+            padding: 10px 2px 18px;
+        }
+
+        h1, h2, h3, p {
+            margin-top: 0;
+        }
+
+        h1 {
+            margin-bottom: 6px;
+            font-size: clamp(2rem, 9vw, 3.1rem);
+            line-height: 1;
+            letter-spacing: 0;
+        }
+
+        h2 {
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        h3 {
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        .subtitle {
+            color: var(--muted);
+            line-height: 1.45;
+            margin-bottom: 0;
+        }
+
+        .panel {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            padding: 18px;
+            margin-bottom: 16px;
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 8px;
+            background: var(--panel-soft);
+            margin-bottom: 16px;
+        }
+
+        .status strong {
+            display: block;
+            font-size: 0.92rem;
+        }
+
+        .status span {
+            color: var(--muted);
+            font-size: 0.82rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--muted);
+            font-weight: 700;
+            font-size: 0.82rem;
+        }
+
+        input {
+            width: 100%;
+            min-height: 48px;
+            padding: 12px 14px;
+            margin-bottom: 14px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: var(--panel-soft);
+            color: var(--text);
+            font: inherit;
+        }
+
+        button, .button-link {
+            width: 100%;
+            min-height: 52px;
+            border: 0;
+            border-radius: 8px;
+            padding: 14px 16px;
+            color: #ffffff;
+            background: var(--primary);
+            font: inherit;
+            font-weight: 850;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            transition: transform 0.16s ease, background 0.16s ease;
+        }
+
+        button:active, .button-link:active {
+            transform: scale(0.98);
+        }
+
+        .button-link {
+            background: var(--accent);
+            color: #082623;
+            margin-bottom: 10px;
+        }
+
+        .video-frame {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            margin: 0 0 12px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: #000000;
+        }
+
+        .secondary {
+            background: transparent;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+
+        .quiet {
+            min-height: 42px;
+            padding: 10px 12px;
+            color: var(--muted);
+            border: 1px solid var(--line);
+            background: transparent;
+            font-size: 0.84rem;
+        }
+
+        .sleeping {
+            background: linear-gradient(180deg, rgba(45, 212, 191, 0.14), transparent), var(--panel);
+            border-color: rgba(45, 212, 191, 0.4);
+        }
+
+        .time-large {
+            margin: 6px 0 14px;
+            color: var(--accent);
+            font-size: clamp(2rem, 13vw, 4.3rem);
+            font-weight: 900;
+            line-height: 1;
+            letter-spacing: 0;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 8px;
+            margin: 14px 0;
+        }
+
+        .metric {
+            min-width: 0;
+            padding: 12px 10px;
+            border-radius: 8px;
+            background: var(--panel-soft);
+            border: 1px solid var(--line);
+        }
+
+        .metric span {
+            display: block;
+            color: var(--muted);
+            font-size: 0.72rem;
+            font-weight: 750;
+            margin-bottom: 4px;
+        }
+
+        .metric strong {
+            display: block;
+            font-size: clamp(1rem, 5vw, 1.45rem);
+            line-height: 1.1;
+        }
+
+        .chart-wrap {
+            height: 180px;
+            margin: 12px 0 6px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: var(--panel-soft);
+            padding: 10px;
+        }
+
+        #dashboardChart {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .tip-list {
+            display: grid;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .tip {
+            padding: 12px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: var(--panel-soft);
+        }
+
+        .tip p {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.42;
+            font-size: 0.93rem;
+        }
+
+        .history {
+            display: grid;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .history-row {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr 0.8fr;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            border-top: 1px solid var(--line);
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+
+        .history-row strong {
+            color: var(--text);
+            text-align: right;
+        }
+
+        .history-row span:last-child {
+            text-align: right;
+        }
+
+        .empty {
+            color: var(--muted);
+            font-size: 0.92rem;
+            margin-bottom: 0;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <header>
+            <h1>Sleep Check-In</h1>
+            <p class="subtitle">Set tonight's bedtime, do a short breathing exercise, then check in when you wake up.</p>
+        </header>
+
+        <section id="tonight-panel" class="panel">
+            <div class="status">
+                <div>
+                    <strong id="status-title">Tonight</strong>
+                    <span id="status-detail">Choose a bedtime before starting your sleep check-in.</span>
+                </div>
+                <span id="status-mark" aria-hidden="true">Ready</span>
+            </div>
+
+            <div id="setup-flow">
+                <label for="bedtime">Planned bedtime</label>
+                <input type="time" id="bedtime" value="22:30">
+
+                <button type="button" class="button-link" onclick="playBreathingVideo()">Play Deep Breathing Video</button>
+                <iframe
+                    id="breathing-video"
+                    class="video-frame hidden"
+                    title="Deep breathing video"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen>
+                </iframe>
+                <button type="button" onclick="startSleep()">I'm sleeping now</button>
+            </div>
+
+            <div id="sleep-flow" class="hidden">
+                <h2>Good morning</h2>
+                <p class="subtitle">When this is the first thing you open after waking up, tap below to record your sleep.</p>
+                <div class="time-large" id="sleep-start-time">--:--</div>
+                <button type="button" onclick="wakeUp()">I woke up</button>
+            </div>
+        </section>
+
+        <section class="panel">
+            <h2>Sleep Hygiene</h2>
+            <p class="subtitle">Bite-sized reminders you can read quickly before bedtime.</p>
+            <div class="tip-list">
+                <article class="tip">
+                    <h3>Dim the lights</h3>
+                    <p>Lower light helps your brain prepare for sleep. Try doing this about one hour before bed.</p>
+                </article>
+                <article class="tip">
+                    <h3>Park the phone</h3>
+                    <p>After the breathing video, put the phone away so the screen does not keep your brain alert.</p>
+                </article>
+                <article class="tip">
+                    <h3>Keep tomorrow simple</h3>
+                    <p>Place school items, water, and uniform where you can find them. Fewer worries make it easier to settle.</p>
+                </article>
+                <article class="tip">
+                    <h3>Use a steady wake time</h3>
+                    <p>A regular morning check-in helps your body learn a more stable sleep rhythm.</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="panel">
+            <h2>Dashboard</h2>
+            <p class="subtitle">Read-only sleep duration tracking over time from this device's check-ins.</p>
+            <div class="dashboard-grid">
+                <div class="metric">
+                    <span>Entries</span>
+                    <strong id="metric-entries">0</strong>
+                </div>
+                <div class="metric">
+                    <span>Average</span>
+                    <strong id="metric-average">--</strong>
+                </div>
+                <div class="metric">
+                    <span>Latest</span>
+                    <strong id="metric-latest">--</strong>
+                </div>
+            </div>
+            <div class="chart-wrap">
+                <canvas id="dashboardChart"></canvas>
+            </div>
+            <div id="history" class="history"></div>
+        </section>
+    </main>
+
+    <script>
+        const STORE_KEY = "sleep_checkin_state";
+
+        const state = loadState();
+        const bedtimeInput = document.getElementById("bedtime");
+        const setupFlow = document.getElementById("setup-flow");
+        const sleepFlow = document.getElementById("sleep-flow");
+        const tonightPanel = document.getElementById("tonight-panel");
+        const statusTitle = document.getElementById("status-title");
+        const statusDetail = document.getElementById("status-detail");
+        const statusMark = document.getElementById("status-mark");
+        const sleepStartTime = document.getElementById("sleep-start-time");
+        const historyEl = document.getElementById("history");
+        const metricEntries = document.getElementById("metric-entries");
+        const metricAverage = document.getElementById("metric-average");
+        const metricLatest = document.getElementById("metric-latest");
+        const dashboardChart = document.getElementById("dashboardChart");
+        const chartContext = dashboardChart.getContext("2d");
+        const breathingVideo = document.getElementById("breathing-video");
+
+        bedtimeInput.value = state.bedtime || "22:30";
+        bedtimeInput.addEventListener("change", () => {
+            state.bedtime = bedtimeInput.value;
+            saveState();
+            render();
+        });
+
+        window.addEventListener("load", render);
+        window.addEventListener("resize", renderDashboard);
+        setInterval(renderClockTheme, 60000);
+
+        function loadState() {
+            try {
+                return JSON.parse(localStorage.getItem(STORE_KEY)) || {
+                    bedtime: "22:30",
+                    activeSleep: null,
+                    history: []
+                };
+            } catch {
+                return { bedtime: "22:30", activeSleep: null, history: [] };
+            }
+        }
+
+        function saveState() {
+            localStorage.setItem(STORE_KEY, JSON.stringify(state));
+        }
+
+        function startSleep() {
+            state.bedtime = bedtimeInput.value || "22:30";
+            state.activeSleep = {
+                startedAt: Date.now(),
+                plannedBedtime: state.bedtime
+            };
+            saveState();
+            render();
+        }
+
+        function playBreathingVideo() {
+            breathingVideo.classList.remove("hidden");
+            if (!breathingVideo.src) {
+                breathingVideo.src = "https://www.youtube-nocookie.com/embed/p8fjYPC-k2k?autoplay=1&rel=0";
+            }
+        }
+
+        function wakeUp() {
+            if (!state.activeSleep) return;
+
+            const endedAt = Date.now();
+            const startedAt = state.activeSleep.startedAt;
+            const durationHours = Math.max(0, (endedAt - startedAt) / 3600000);
+            const record = {
+                startedAt,
+                endedAt,
+                plannedBedtime: state.activeSleep.plannedBedtime,
+                durationHours: Number(durationHours.toFixed(1))
+            };
+
+            state.history.unshift(record);
+            state.history = state.history.slice(0, 30);
+            state.activeSleep = null;
+            saveState();
+            render();
+        }
+
+        function render() {
+            renderClockTheme();
+            renderFlow();
+            renderDashboard();
+        }
+
+        function renderClockTheme() {
+            const hour = new Date().getHours();
+            document.body.className = hour >= 7 && hour < 19 ? "theme-day" : "";
+        }
+
+        function renderFlow() {
+            if (state.activeSleep) {
+                setupFlow.classList.add("hidden");
+                sleepFlow.classList.remove("hidden");
+                tonightPanel.classList.add("sleeping");
+
+                const start = new Date(state.activeSleep.startedAt);
+                statusTitle.textContent = "Sleep in progress";
+                statusDetail.textContent = "Started at " + formatTime(start) + ". Open this page first when you wake up.";
+                statusMark.textContent = "Sleeping";
+                sleepStartTime.textContent = formatTime(start);
+                return;
+            }
+
+            setupFlow.classList.remove("hidden");
+            sleepFlow.classList.add("hidden");
+            tonightPanel.classList.remove("sleeping");
+            statusTitle.textContent = "Tonight";
+            statusDetail.textContent = "Planned bedtime: " + (state.bedtime || "22:30");
+            statusMark.textContent = "Ready";
+        }
+
+        function renderDashboard() {
+            if (!state.history.length) {
+                metricEntries.textContent = "0";
+                metricAverage.textContent = "--";
+                metricLatest.textContent = "--";
+                historyEl.innerHTML = '<p class="empty">No wake-up check-ins recorded yet.</p>';
+                drawDashboardChart([]);
+                return;
+            }
+
+            const totalHours = state.history.reduce((sum, item) => sum + item.durationHours, 0);
+            const average = totalHours / state.history.length;
+            metricEntries.textContent = state.history.length;
+            metricAverage.textContent = average.toFixed(1) + "h";
+            metricLatest.textContent = state.history[0].durationHours + "h";
+            drawDashboardChart(state.history);
+
+            historyEl.innerHTML = state.history.map((item) => {
+                const started = new Date(item.startedAt);
+                const ended = new Date(item.endedAt);
+                return `
+                    <div class="history-row">
+                        <span>${formatDate(ended)}</span>
+                        <span>${formatTime(started)}-${formatTime(ended)}</span>
+                        <strong>${item.durationHours}h</strong>
+                    </div>
+                `;
+            }).join("");
+        }
+
+        function drawDashboardChart(records) {
+            const scale = window.devicePixelRatio || 1;
+            const rect = dashboardChart.getBoundingClientRect();
+            const width = Math.max(280, Math.floor(rect.width));
+            const height = Math.max(150, Math.floor(rect.height));
+            dashboardChart.width = width * scale;
+            dashboardChart.height = height * scale;
+            chartContext.setTransform(scale, 0, 0, scale, 0, 0);
+            chartContext.clearRect(0, 0, width, height);
+
+            const axisColor = getComputedStyle(document.body).getPropertyValue("--line").trim();
+            const muted = getComputedStyle(document.body).getPropertyValue("--muted").trim();
+            const primary = getComputedStyle(document.body).getPropertyValue("--primary").trim();
+            const accent = getComputedStyle(document.body).getPropertyValue("--accent").trim();
+
+            chartContext.strokeStyle = axisColor;
+            chartContext.lineWidth = 1;
+            chartContext.beginPath();
+            chartContext.moveTo(34, 12);
+            chartContext.lineTo(34, height - 28);
+            chartContext.lineTo(width - 8, height - 28);
+            chartContext.stroke();
+
+            chartContext.fillStyle = muted;
+            chartContext.font = "11px sans-serif";
+            chartContext.fillText("10h", 6, 18);
+            chartContext.fillText("0h", 12, height - 30);
+
+            if (!records.length) {
+                chartContext.fillText("No data yet", 44, Math.round(height / 2));
+                return;
+            }
+
+            const plotted = records.slice(0, 14).reverse();
+            const maxHours = Math.max(10, ...plotted.map((item) => item.durationHours));
+            const chartLeft = 42;
+            const chartRight = width - 12;
+            const chartTop = 16;
+            const chartBottom = height - 34;
+            const chartWidth = chartRight - chartLeft;
+            const chartHeight = chartBottom - chartTop;
+            const barGap = 8;
+            const barWidth = Math.max(10, (chartWidth - barGap * (plotted.length - 1)) / plotted.length);
+
+            plotted.forEach((item, index) => {
+                const x = chartLeft + index * (barWidth + barGap);
+                const barHeight = Math.max(3, (item.durationHours / maxHours) * chartHeight);
+                const y = chartBottom - barHeight;
+                chartContext.fillStyle = item.durationHours >= 8 ? accent : primary;
+                chartContext.fillRect(x, y, barWidth, barHeight);
+            });
+        }
+
+        function formatTime(date) {
+            return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+        }
+
+        function formatDate(date) {
+            return date.toLocaleDateString([], { weekday: "short", month: "short", day: "numeric" });
+        }
+    </script>
+</body>
+</html>
