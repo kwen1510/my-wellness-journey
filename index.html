@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>My Wellness Journey</title>
   <link rel="icon" href="data:," />
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <style>
     :root {
       --app-bg: #f4f3f1;
@@ -55,7 +56,7 @@
 
     h1 {
       margin-bottom: 0;
-      font-size: clamp(2rem, 3vw, 3.4rem);
+      font-size: clamp(2rem, 2.6vw, 3rem);
       line-height: 1.05;
       letter-spacing: 0;
       font-weight: 850;
@@ -63,7 +64,7 @@
 
     h2 {
       margin-bottom: 10px;
-      font-size: 1.22rem;
+      font-size: clamp(1.12rem, 1.4vw, 1.32rem);
       letter-spacing: 0;
       font-weight: 850;
     }
@@ -76,8 +77,8 @@
 
     p {
       color: var(--muted);
-      line-height: 1.38;
-      font-size: 0.9rem;
+      line-height: 1.45;
+      font-size: clamp(0.9rem, 1vw, 0.98rem);
     }
 
     .device {
@@ -92,24 +93,6 @@
       border-radius: 0;
       box-shadow: none;
       position: relative;
-    }
-
-    .statusbar {
-      height: 48px;
-      flex: 0 0 auto;
-      display: none;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 25px;
-      font-size: 0.78rem;
-      font-weight: 800;
-      color: #2a2927;
-    }
-
-    .status-icons {
-      display: inline-flex;
-      gap: 5px;
-      font-size: 0.72rem;
     }
 
     .screen {
@@ -148,17 +131,28 @@
     }
 
     .profile-dot {
-      width: 43px;
-      height: 43px;
+      width: 46px;
+      height: 46px;
       border-radius: 50%;
       display: grid;
       place-items: center;
       flex: 0 0 auto;
-      font-size: 1.35rem;
-      background:
-        radial-gradient(circle at 60% 35%, rgba(255, 255, 255, 0.7), transparent 22%),
-        linear-gradient(135deg, #ffb066, #dd6f54);
-      box-shadow: 0 8px 18px rgba(119, 75, 45, 0.22);
+      color: #5d4032;
+      background: var(--white);
+      box-shadow: 0 8px 18px rgba(71, 65, 58, 0.08);
+    }
+
+    .profile-dot svg {
+      width: 22px;
+      height: 22px;
+      stroke-width: 2.4;
+    }
+
+    .icon {
+      width: 18px;
+      height: 18px;
+      stroke-width: 2.3;
+      flex: 0 0 auto;
     }
 
     .round-btn {
@@ -175,6 +169,12 @@
       flex: 0 0 auto;
     }
 
+    .round-btn svg {
+      width: 20px;
+      height: 20px;
+      stroke-width: 2.5;
+    }
+
     .section-head {
       display: flex;
       align-items: center;
@@ -182,6 +182,8 @@
       gap: 12px;
       margin: 18px 0 10px;
     }
+
+    .section-head > * { min-width: 0; }
 
     .section-head button,
     .section-head a {
@@ -273,7 +275,7 @@
     .summary-card.wide {
       grid-column: span 2;
       display: grid;
-      grid-template-columns: auto 1fr;
+      grid-template-columns: auto auto 1fr;
       gap: 12px;
       align-items: center;
     }
@@ -289,6 +291,25 @@
 
     .summary-card strong { display: block; font-size: 0.92rem; margin-bottom: 4px; }
     .summary-card small { color: rgba(31, 31, 31, 0.58); font-size: 0.75rem; font-weight: 800; }
+
+    .card-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 14px;
+      color: #4f463d;
+      background: rgba(255, 255, 255, 0.56);
+    }
+
+    .summary-card.wide .card-icon { margin-bottom: 0; }
+
+    .card-icon svg {
+      width: 18px;
+      height: 18px;
+      stroke-width: 2.35;
+    }
 
     .quick-grid {
       display: grid;
@@ -320,6 +341,7 @@
       background: rgba(255, 255, 255, 0.7);
       font-size: 0.72rem;
       font-weight: 850;
+      white-space: nowrap;
     }
 
     .tabs {
@@ -413,9 +435,24 @@
       font-weight: 900;
     }
 
-    .avatar-btn { font-size: 1.35rem; }
+    .avatar-btn {
+      display: grid;
+      place-items: center;
+      color: #6f6963;
+    }
+
+    .avatar-btn svg {
+      width: 21px;
+      height: 21px;
+      stroke-width: 2.35;
+    }
+
     .avatar-btn.selected,
-    .score-btn.selected { background: var(--yellow); box-shadow: inset 0 0 0 3px rgba(31, 31, 31, 0.08); }
+    .score-btn.selected {
+      color: var(--ink);
+      background: var(--yellow);
+      box-shadow: inset 0 0 0 3px rgba(31, 31, 31, 0.08);
+    }
 
     .mood-btn {
       min-height: 74px;
@@ -496,9 +533,24 @@
       justify-content: space-between;
       text-align: left;
       background: var(--card-color, var(--peach));
+      min-width: 0;
+      overflow: hidden;
     }
 
-    .activity-art { font-size: 2rem; line-height: 1; }
+    .activity-art {
+      width: 42px;
+      height: 42px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      background: rgba(255, 255, 255, 0.44);
+    }
+
+    .activity-art svg {
+      width: 22px;
+      height: 22px;
+      stroke-width: 2.35;
+    }
     .activity-card h3 { margin: 0 0 3px; font-size: 0.98rem; }
     .activity-card p { margin-bottom: 0; color: rgba(31, 31, 31, 0.58); font-size: 0.76rem; font-weight: 800; }
     .start-label { align-self: flex-start; border-radius: 999px; padding: 6px 10px; background: rgba(255, 255, 255, 0.48); font-size: 0.72rem; font-weight: 900; }
@@ -621,6 +673,12 @@
       font-size: 1.12rem;
     }
 
+    .history-emoji svg {
+      width: 19px;
+      height: 19px;
+      stroke-width: 2.35;
+    }
+
     .history-item strong { display: block; font-size: 0.88rem; margin-bottom: 2px; }
     .history-item small { display: block; color: var(--muted); font-size: 0.72rem; font-weight: 750; }
 
@@ -637,6 +695,7 @@
     .donut {
       width: 158px;
       height: 158px;
+      max-width: 100%;
       display: grid;
       place-items: center;
       border-radius: 50%;
@@ -660,10 +719,13 @@
 
     .focus-layout {
       display: grid;
-      grid-template-columns: 158px 1fr;
+      grid-template-columns: minmax(136px, 158px) minmax(0, 1fr);
       gap: 16px;
       align-items: center;
+      min-width: 0;
     }
+
+    .focus-layout > * { min-width: 0; }
 
     .category-grid,
     .quick-add {
@@ -682,13 +744,27 @@
       background: #f1efec;
       font-size: 0.78rem;
       font-weight: 850;
+      min-width: 0;
+      overflow: hidden;
     }
 
-    .choice-card span { display: block; font-size: 1.18rem; margin-bottom: 4px; }
+    .choice-card span {
+      display: grid;
+      place-items: center;
+      margin-bottom: 5px;
+    }
+
+    .choice-card svg {
+      width: 19px;
+      height: 19px;
+      stroke-width: 2.35;
+    }
+
     .choice-card.active { color: var(--green-dark); background: #d5eadc; }
 
     .focus-ring {
-      width: min(74vw, 254px);
+      width: min(100%, 254px);
+      max-width: 254px;
       aspect-ratio: 1;
       display: grid;
       place-items: center;
@@ -713,7 +789,7 @@
 
     .focus-clock {
       color: var(--green-dark);
-      font-size: 3.3rem;
+      font-size: clamp(2.35rem, 8vw, 3.3rem);
       line-height: 1;
       font-weight: 900;
       letter-spacing: 0;
@@ -736,7 +812,10 @@
       border-radius: 18px;
       background: #f1efec;
       margin-bottom: 16px;
+      min-width: 0;
     }
+
+    .sleep-status > * { min-width: 0; }
 
     .sleep-status strong { display: block; font-size: 0.92rem; }
     .sleep-status span { color: var(--muted); font-size: 0.78rem; font-weight: 800; }
@@ -781,10 +860,19 @@
       border-radius: 20px;
       padding: 13px;
       background: var(--metric-bg, var(--white));
+      min-width: 0;
+      overflow: hidden;
     }
 
     .metric-card span { display: block; color: rgba(31, 31, 31, 0.58); font-size: 0.72rem; font-weight: 850; margin-bottom: 6px; }
-    .metric-card strong { display: block; font-size: 1.45rem; line-height: 1; font-weight: 900; font-variant-numeric: tabular-nums; }
+    .metric-card strong {
+      display: block;
+      font-size: clamp(1.22rem, 2vw, 1.45rem);
+      line-height: 1.05;
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+      overflow-wrap: anywhere;
+    }
 
     details.details-card { padding: 0; overflow: hidden; }
     details.details-card summary {
@@ -846,8 +934,13 @@
       display: grid;
       place-items: center;
       color: currentColor;
-      font-size: 1rem;
       line-height: 1;
+    }
+
+    .nav-icon svg {
+      width: 17px;
+      height: 17px;
+      stroke-width: 2.4;
     }
 
     .nav-btn.active {
@@ -916,13 +1009,9 @@
         display: flex;
         flex-direction: column;
       }
-      .statusbar {
-        display: flex;
-        padding-top: env(safe-area-inset-top);
-      }
       .screen {
         flex: 1;
-        padding: 0 18px 18px;
+        padding: max(18px, env(safe-area-inset-top)) 18px 18px;
       }
       .page {
         width: 100%;
@@ -976,6 +1065,8 @@
       .screen { padding-inline: 14px; }
       .focus-layout { grid-template-columns: 1fr; }
       .donut { margin: 0 auto; }
+      .category-grid,
+      .quick-add { grid-template-columns: repeat(3, minmax(0, 1fr)); }
       .activity-grid, .mood-grid { grid-template-columns: 1fr; }
       .score-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
       h1 { font-size: 1.65rem; }
@@ -985,16 +1076,11 @@
 </head>
 <body>
   <div class="device">
-    <div class="statusbar" aria-hidden="true">
-      <span>9:41</span>
-      <span class="status-icons">▮▮▮ ᯤ ▰</span>
-    </div>
-
     <main class="screen">
       <section id="homePage" class="page active" aria-labelledby="homeTitle">
         <div class="top-row">
           <h1 id="homeTitle">Hi, Student</h1>
-          <div id="profileAvatar" class="profile-dot">🌟</div>
+          <div id="profileAvatar" class="profile-dot" aria-hidden="true"><i data-lucide="user-round"></i></div>
         </div>
 
         <div id="calendarRow" class="calendar-row" aria-label="Current week"></div>
@@ -1010,16 +1096,19 @@
         </div>
         <div class="summary-grid">
           <button class="summary-card" style="--summary-bg:#d5eadc" type="button" data-page="moodPage">
+            <span class="card-icon"><i data-lucide="heart-pulse"></i></span>
             <span id="homeMoodScore" class="summary-num">--</span>
             <strong>Mood average</strong>
             <small id="homeMoodSmall">No check-ins yet</small>
           </button>
           <button class="summary-card" style="--summary-bg:#ded5ff" type="button" data-page="focusPage">
+            <span class="card-icon"><i data-lucide="timer"></i></span>
             <span id="homeFocusRemaining" class="summary-num">120m</span>
             <strong>Screen balance</strong>
             <small id="homeFocusSmall">0m logged</small>
           </button>
           <button class="summary-card wide" style="--summary-bg:#ffe4a3" type="button" data-page="sleepPage">
+            <span class="card-icon"><i data-lucide="moon"></i></span>
             <span id="homeSleepLatest" class="summary-num">--</span>
             <span>
               <strong>Sleep latest</strong>
@@ -1033,21 +1122,25 @@
         </div>
         <div class="quick-grid">
           <button class="quick-card" style="--quick-bg:#ffd8d2" type="button" data-page="moodPage" data-mood-tab="moodCheckinPanel">
+            <span class="card-icon"><i data-lucide="smile-plus"></i></span>
             <strong>Mood check-in</strong>
             <p>Start with how you feel right now.</p>
             <span class="pill">Mood</span>
           </button>
           <button class="quick-card" style="--quick-bg:#d5eadc" type="button" data-page="focusPage" data-focus-tab="focusBalancePanel">
+            <span class="card-icon"><i data-lucide="smartphone"></i></span>
             <strong>Log screen time</strong>
             <p>Track social, games, or videos.</p>
             <span class="pill">Focus</span>
           </button>
           <button class="quick-card" style="--quick-bg:#ded5ff" type="button" data-page="focusPage" data-focus-tab="focusStudyPanel">
+            <span class="card-icon"><i data-lucide="timer"></i></span>
             <strong>Start focus</strong>
             <p>Settle into one study session.</p>
             <span class="pill">Study</span>
           </button>
           <button class="quick-card" style="--quick-bg:#d7e3ff" type="button" data-page="sleepPage" data-sleep-tab="sleepTonightPanel">
+            <span class="card-icon"><i data-lucide="bed"></i></span>
             <strong>Bedtime check</strong>
             <p>Plan sleep and breathe slowly.</p>
             <span class="pill">Sleep</span>
@@ -1061,7 +1154,7 @@
             <h1 id="moodTitle">Mood</h1>
             <p>Check in, try an activity, then compare how you feel after.</p>
           </div>
-          <div id="profileAvatarMood" class="profile-dot">🌟</div>
+          <div id="profileAvatarMood" class="profile-dot" aria-hidden="true"><i data-lucide="user-round"></i></div>
         </div>
 
         <div class="tabs" style="--tab-count:3" data-tabs="mood">
@@ -1166,7 +1259,7 @@
             <h1 id="focusTitle">Focus</h1>
             <p>Log screen time and earn softer breaks through study sessions.</p>
           </div>
-          <button class="round-btn" type="button" data-page="homePage">‹</button>
+          <button class="round-btn" type="button" data-page="homePage" aria-label="Back home"><i data-lucide="chevron-left"></i></button>
         </div>
 
         <div class="tabs" style="--tab-count:2" data-tabs="focus">
@@ -1206,9 +1299,9 @@
           <div class="form-card">
             <h2>Add activity</h2>
             <div class="category-grid" role="group" aria-label="Activity category">
-              <button class="choice-card active" type="button" data-focus-category="Social"><span>📱</span>Social</button>
-              <button class="choice-card" type="button" data-focus-category="Gaming"><span>🎮</span>Games</button>
-              <button class="choice-card" type="button" data-focus-category="Video"><span>▶</span>Video</button>
+              <button class="choice-card active" type="button" data-focus-category="Social"><span><i data-lucide="smartphone"></i></span>Social</button>
+              <button class="choice-card" type="button" data-focus-category="Gaming"><span><i data-lucide="gamepad-2"></i></span>Games</button>
+              <button class="choice-card" type="button" data-focus-category="Video"><span><i data-lucide="square-play"></i></span>Video</button>
             </div>
             <div class="field">
               <div class="range-head">
@@ -1252,7 +1345,7 @@
             <h1 id="sleepTitle">Sleep</h1>
             <p>Plan bedtime, breathe slowly, then check in when you wake up.</p>
           </div>
-          <button class="round-btn" type="button" data-page="homePage">‹</button>
+          <button class="round-btn" type="button" data-page="homePage" aria-label="Back home"><i data-lucide="chevron-left"></i></button>
         </div>
 
         <div class="tabs" style="--tab-count:3" data-tabs="sleep">
@@ -1320,9 +1413,9 @@
 
       <section id="profilePage" class="page" aria-labelledby="profileTitle">
         <div class="top-row">
-          <button class="round-btn" type="button" data-page="homePage">‹</button>
+          <button class="round-btn" type="button" data-page="homePage" aria-label="Back home"><i data-lucide="chevron-left"></i></button>
           <h1 id="profileTitle">Profile</h1>
-          <div id="profileAvatarLarge" class="profile-dot">🌟</div>
+          <div id="profileAvatarLarge" class="profile-dot" aria-hidden="true"><i data-lucide="user-round"></i></div>
         </div>
 
         <div class="tabs" style="--tab-count:3" data-tabs="profile">
@@ -1399,11 +1492,11 @@
     </main>
 
     <nav class="bottom-nav" aria-label="Primary">
-      <button class="nav-btn active" type="button" data-page="homePage"><span class="nav-icon">⌂</span><span>Home</span></button>
-      <button class="nav-btn" type="button" data-page="moodPage"><span class="nav-icon">◎</span><span>Mood</span></button>
-      <button class="nav-btn" type="button" data-page="focusPage"><span class="nav-icon">◷</span><span>Focus</span></button>
-      <button class="nav-btn" type="button" data-page="sleepPage"><span class="nav-icon">☾</span><span>Sleep</span></button>
-      <button class="nav-btn" type="button" data-page="profilePage"><span class="nav-icon">○</span><span>Profile</span></button>
+      <button class="nav-btn active" type="button" data-page="homePage"><span class="nav-icon"><i data-lucide="home"></i></span><span>Home</span></button>
+      <button class="nav-btn" type="button" data-page="moodPage"><span class="nav-icon"><i data-lucide="smile"></i></span><span>Mood</span></button>
+      <button class="nav-btn" type="button" data-page="focusPage"><span class="nav-icon"><i data-lucide="timer"></i></span><span>Focus</span></button>
+      <button class="nav-btn" type="button" data-page="sleepPage"><span class="nav-icon"><i data-lucide="moon"></i></span><span>Sleep</span></button>
+      <button class="nav-btn" type="button" data-page="profilePage"><span class="nav-icon"><i data-lucide="user-round"></i></span><span>Profile</span></button>
     </nav>
 
     <div id="moodTimerPanel" class="timer-panel" aria-live="polite">
@@ -1554,11 +1647,18 @@
       ]
     };
 
-    const avatarChoices = ["🌟", "🎧", "🎨", "🚀", "🤖"];
+    const avatarChoices = [
+      { id: "student", label: "Student", icon: "user-round" },
+      { id: "music", label: "Music", icon: "headphones" },
+      { id: "creative", label: "Creative", icon: "palette" },
+      { id: "goals", label: "Goals", icon: "rocket" },
+      { id: "helper", label: "Helper", icon: "bot" }
+    ];
+    const legacyAvatarMap = { "🌟": "student", "spark": "student", "🎧": "music", "🎨": "creative", "🚀": "goals", "🤖": "helper" };
     let moodDb;
     let moodState = {
       session: "Morning",
-      avatar: "🌟",
+      avatar: "student",
       selectedMood: "",
       wellbeingScore: 5,
       postMood: "",
@@ -1596,6 +1696,31 @@
       toast.classList.add("show");
       window.clearTimeout(appShowToast.timeout);
       appShowToast.timeout = window.setTimeout(() => toast.classList.remove("show"), 2400);
+    }
+
+    function refreshIcons() {
+      if (window.lucide) window.lucide.createIcons();
+    }
+
+    function avatarMeta(value) {
+      const id = legacyAvatarMap[value] || value || "spark";
+      return avatarChoices.find(avatar => avatar.id === id) || avatarChoices[0];
+    }
+
+    function activityIconName(activity) {
+      const iconMap = {
+        "⏱": "clock",
+        "✍️": "pen-line",
+        "🌬": "wind",
+        "☕": "coffee",
+        "⭐": "sparkles",
+        "🧘": "heart-pulse",
+        "📚": "book-open",
+        "🪁": "move",
+        "📖": "book-open",
+        "🎬": "clapperboard"
+      };
+      return iconMap[activity.icon] || "sparkles";
     }
 
     function appShowPage(pageId) {
@@ -1717,7 +1842,7 @@
 
     function renderMoodChoices() {
       byId("moodAvatarRow").innerHTML = avatarChoices.map(avatar => `
-        <button class="avatar-btn ${avatar === moodState.avatar ? "selected" : ""}" type="button" data-avatar="${avatar}" aria-label="Avatar ${avatar}">${avatar}</button>
+        <button class="avatar-btn ${avatar.id === avatarMeta(moodState.avatar).id ? "selected" : ""}" type="button" data-avatar="${avatar.id}" aria-label="${avatar.label} avatar"><i data-lucide="${avatar.icon}"></i></button>
       `).join("");
 
       byId("moodGrid").innerHTML = moods.map(mood => `
@@ -1734,6 +1859,7 @@
 
       renderScoreGrid("moodWellbeingGrid", "wellbeing", moodState.wellbeingScore);
       renderScoreGrid("postWellbeingGrid", "post-wellbeing", moodState.postWellbeing);
+      refreshIcons();
     }
 
     function renderScoreGrid(containerId, dataName, selectedValue) {
@@ -1744,11 +1870,14 @@
     }
 
     function setMoodAvatar(avatar) {
-      moodState.avatar = avatar;
-      byId("profileAvatar").textContent = avatar;
-      byId("profileAvatarMood").textContent = avatar;
-      byId("profileAvatarLarge").textContent = avatar;
-      document.querySelectorAll(".avatar-btn").forEach(btn => btn.classList.toggle("selected", btn.dataset.avatar === avatar));
+      const meta = avatarMeta(avatar);
+      moodState.avatar = meta.id;
+      const iconMarkup = `<i data-lucide="${meta.icon}"></i>`;
+      byId("profileAvatar").innerHTML = iconMarkup;
+      byId("profileAvatarMood").innerHTML = iconMarkup;
+      byId("profileAvatarLarge").innerHTML = iconMarkup;
+      document.querySelectorAll(".avatar-btn").forEach(btn => btn.classList.toggle("selected", btn.dataset.avatar === meta.id));
+      refreshIcons();
     }
 
     function setMoodSelection(moodId) {
@@ -1773,11 +1902,12 @@
         : "Save a mood to personalize these self-care practices.";
       byId("moodActivityGrid").innerHTML = moodState.renderedActivities.map(activity => `
         <button class="activity-card" type="button" data-activity="${activity.id}" style="--card-color:${activity.color}">
-          <span class="activity-art">${activity.icon}</span>
+          <span class="activity-art"><i data-lucide="${activityIconName(activity)}"></i></span>
           <span><h3>${activity.title}</h3><p>${activity.count}</p></span>
           <span class="start-label">Start</span>
         </button>
       `).join("");
+      refreshIcons();
     }
 
     async function saveMoodCheckin(event) {
@@ -1938,9 +2068,10 @@
     function moodHistoryMarkup(entry) {
       const mood = moodMeta(entry.mood);
       const score = wellbeingForEntry(entry);
+      const avatar = avatarMeta(entry.avatar);
       return `
         <div class="history-item">
-          <div class="history-emoji" style="background:${mood.bg};color:${mood.color}">${entry.avatar || mood.emoji}</div>
+          <div class="history-emoji" style="background:${mood.bg};color:${mood.color}"><i data-lucide="${avatar.icon}"></i></div>
           <div>
             <strong>${mood.label} • ${score ? `wellbeing ${score}/10` : `intensity ${entry.intensity}/10`}</strong>
             <small>${entry.session} • ${formatDateTime(entry.createdAt)}</small>
@@ -1986,6 +2117,7 @@
       byId("moodScoreTotal").textContent = pointTotal;
       renderHomeDashboard();
       renderProfileDashboard();
+      refreshIcons();
     }
 
     function loadFocusState() {
@@ -2210,6 +2342,7 @@
       byId("sleepMetricLatest").textContent = `${records[0].durationHours}h`;
       byId("sleepHistory").innerHTML = records.map(sleepHistoryMarkup).join("");
       drawSleepChart(records);
+      refreshIcons();
     }
 
     function sleepHistoryMarkup(item) {
@@ -2217,7 +2350,7 @@
       const ended = new Date(item.endedAt);
       return `
         <div class="history-item">
-          <div class="history-emoji" style="background:#d7e3ff">☾</div>
+          <div class="history-emoji" style="background:#d7e3ff"><i data-lucide="moon"></i></div>
           <div>
             <strong>${item.durationHours}h sleep</strong>
             <small>${ended.toLocaleDateString([], { weekday: "short", month: "short", day: "numeric" })} • ${formatClock(started)}-${formatClock(ended)}</small>
@@ -2313,9 +2446,10 @@
       byId("profileActivityDetails").innerHTML = completions.length ? completions.slice(0, 10).map(activityHistoryMarkup).join("") : `<div class="empty">Activity outcomes will appear here.</div>`;
       byId("profileSleepDetails").innerHTML = sleepRecords.length ? sleepRecords.map(sleepHistoryMarkup).join("") : `<div class="empty">Sleep history will appear after wake-up check-ins.</div>`;
       byId("profileFocusSummary").innerHTML = `
-        <div class="history-item"><div class="history-emoji">◐</div><div><strong>${focusState.screenTimeLogged}/${focusState.dailyLimit}m today</strong><small>${getFocusMessage(Math.min(100, (focusState.screenTimeLogged / focusState.dailyLimit) * 100), Math.max(0, focusState.dailyLimit - focusState.screenTimeLogged))}</small></div><span class="pill">Screen</span></div>
-        <div class="history-item"><div class="history-emoji">◷</div><div><strong>${formatSeconds(focusState.bankSeconds)} break bank</strong><small>${focusState.streak} day focus streak</small></div><span class="pill">Focus</span></div>
+        <div class="history-item"><div class="history-emoji"><i data-lucide="smartphone"></i></div><div><strong>${focusState.screenTimeLogged}/${focusState.dailyLimit}m today</strong><small>${getFocusMessage(Math.min(100, (focusState.screenTimeLogged / focusState.dailyLimit) * 100), Math.max(0, focusState.dailyLimit - focusState.screenTimeLogged))}</small></div><span class="pill">Screen</span></div>
+        <div class="history-item"><div class="history-emoji"><i data-lucide="timer"></i></div><div><strong>${formatSeconds(focusState.bankSeconds)} break bank</strong><small>${focusState.streak} day focus streak</small></div><span class="pill">Focus</span></div>
       `;
+      refreshIcons();
     }
 
     async function exportCombinedCsv() {
