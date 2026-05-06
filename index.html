@@ -1429,7 +1429,6 @@
             <h2>Local data</h2>
             <p>All check-ins, activities, focus logs, and sleep records are stored on this device.</p>
             <button id="exportBtn" class="primary" type="button">Export Combined CSV</button>
-            <button id="clearBtn" class="danger-btn" type="button">Clear All Local Data</button>
           </div>
         </div>
 
@@ -2471,29 +2470,6 @@
       URL.revokeObjectURL(link.href);
     }
 
-    async function clearAllLocalData() {
-      if (!window.confirm("Clear all local mood, focus, and sleep records from this device?")) return;
-      await moodClearAllRecords();
-      localStorage.removeItem(FOCUS_STORAGE_KEY);
-      localStorage.removeItem(SLEEP_STORAGE_KEY);
-      moodState.lastMoodEntry = null;
-      moodState.selectedMood = "";
-      moodState.wellbeingScore = 5;
-      moodState.entries = [];
-      moodState.completions = [];
-      focusState = { streak: 12, bankSeconds: 1800, screenTimeLogged: 0, dailyLimit: FOCUS_DEFAULT_LIMIT, lastDate: new Date().toDateString(), lastLog: null };
-      sleepState = { bedtime: "22:30", activeSleep: null, history: [] };
-      persistFocusState();
-      persistSleepState();
-      setMoodSelection("");
-      renderScoreGrid("moodWellbeingGrid", "wellbeing", 5);
-      renderMoodActivities("calm");
-      renderFocusUi();
-      renderSleepUi();
-      await refreshMoodData();
-      appShowToast("Local data cleared.");
-    }
-
     function bindEvents() {
       document.querySelectorAll("[data-page]").forEach(btn => {
         btn.addEventListener("click", () => {
@@ -2600,7 +2576,6 @@
       }, 60000);
 
       byId("exportBtn").addEventListener("click", exportCombinedCsv);
-      byId("clearBtn").addEventListener("click", clearAllLocalData);
     }
 
     async function init() {
