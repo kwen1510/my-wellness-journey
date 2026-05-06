@@ -5,6 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>My Wellness Journey</title>
   <link rel="icon" href="data:," />
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-8K1KTCFH23"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-8K1KTCFH23');
+  </script>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <style>
     :root {
@@ -93,6 +101,77 @@
       border-radius: 0;
       box-shadow: none;
       position: relative;
+    }
+
+    .welcome-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 60;
+      display: none;
+      place-items: center;
+      padding: clamp(18px, 5vw, 56px);
+      background: radial-gradient(circle at 50% 28%, rgba(255, 189, 46, 0.2), transparent 34%), var(--app-bg);
+    }
+
+    .welcome-screen.show { display: grid; }
+
+    .welcome-card {
+      width: min(100%, 1040px);
+      min-height: min(700px, calc(100dvh - 44px));
+      display: grid;
+      grid-template-columns: minmax(0, 0.95fr) minmax(320px, 1.05fr);
+      gap: clamp(22px, 4vw, 46px);
+      align-items: center;
+      border-radius: 34px;
+      padding: clamp(22px, 4vw, 46px);
+      background: rgba(255, 255, 255, 0.94);
+      box-shadow: 0 28px 80px rgba(49, 44, 39, 0.18);
+    }
+
+    .welcome-copy {
+      display: grid;
+      gap: 14px;
+      align-content: center;
+    }
+
+    .welcome-copy h1 {
+      font-size: clamp(2.25rem, 5vw, 4.9rem);
+      line-height: 0.98;
+    }
+
+    .welcome-copy p {
+      max-width: 520px;
+      margin-bottom: 2px;
+      font-size: clamp(0.98rem, 1.5vw, 1.16rem);
+    }
+
+    .welcome-art {
+      width: min(100%, 440px);
+      aspect-ratio: 1 / 1.25;
+      justify-self: center;
+      border-radius: 30px;
+      object-fit: cover;
+      object-position: center 42%;
+      box-shadow: var(--shadow);
+    }
+
+    .welcome-form {
+      display: grid;
+      gap: 10px;
+      max-width: 420px;
+      margin-top: 8px;
+    }
+
+    .welcome-form input {
+      min-height: 58px;
+      border: 0;
+      outline: 0;
+      border-radius: 999px;
+      padding: 0 20px;
+      color: var(--ink);
+      background: #f1efec;
+      font-size: 1rem;
+      font-weight: 850;
     }
 
     .screen {
@@ -218,6 +297,9 @@
     .hero-card {
       min-height: clamp(170px, 24vh, 260px);
       display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 18px;
+      align-items: end;
       align-content: end;
       overflow: hidden;
       color: var(--white);
@@ -227,6 +309,18 @@
     }
 
     .hero-card p { color: rgba(255, 255, 255, 0.76); margin-bottom: 0; }
+
+    .hero-copy { align-self: end; }
+
+    .hero-mascot {
+      width: clamp(96px, 14vw, 178px);
+      aspect-ratio: 1;
+      align-self: center;
+      border-radius: 24px;
+      object-fit: cover;
+      object-position: center 36%;
+      box-shadow: 0 16px 32px rgba(31, 31, 31, 0.18);
+    }
 
     .calendar-row {
       display: grid;
@@ -323,12 +417,31 @@
       min-height: 132px;
       border-radius: 17px;
       padding: 14px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      grid-template-rows: auto auto 1fr auto;
+      gap: 3px 10px;
       text-align: left;
       background: var(--quick-bg, #ffd8d2);
+      overflow: hidden;
     }
 
+    .quick-card .card-icon { grid-column: 1; }
     .quick-card strong { display: block; font-size: 0.86rem; margin-bottom: 7px; }
     .quick-card p { color: #5f5952; font-size: 0.76rem; min-height: 40px; }
+    .quick-card .pill { justify-self: start; }
+
+    .quick-art {
+      grid-column: 2;
+      grid-row: 1 / span 4;
+      width: 76px;
+      height: 86px;
+      align-self: end;
+      border-radius: 18px;
+      object-fit: cover;
+      object-position: center 40%;
+      box-shadow: 0 10px 18px rgba(31, 31, 31, 0.12);
+    }
 
     .pill,
     .tag {
@@ -576,12 +689,13 @@
     }
 
     .activity-art {
-      width: 42px;
-      height: 42px;
-      border-radius: 16px;
+      width: 54px;
+      height: 54px;
+      border-radius: 18px;
       display: grid;
       place-items: center;
       background: rgba(255, 255, 255, 0.44);
+      overflow: hidden;
     }
 
     .activity-art svg {
@@ -589,6 +703,51 @@
       height: 22px;
       stroke-width: 2.35;
     }
+
+    .activity-art img,
+    .choice-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 38%;
+      display: block;
+    }
+
+    .form-card.illustrated,
+    .card.illustrated,
+    .post-panel.illustrated {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .form-card.illustrated,
+    .card.illustrated {
+      padding-right: clamp(18px, 17vw, 200px);
+    }
+
+    .panel-mascot {
+      width: clamp(92px, 16vw, 150px);
+      aspect-ratio: 1;
+      position: absolute;
+      top: clamp(18px, 2.4vw, 30px);
+      right: clamp(18px, 2.4vw, 30px);
+      border-radius: 24px;
+      object-fit: cover;
+      object-position: center 38%;
+      box-shadow: 0 14px 28px rgba(31, 31, 31, 0.13);
+    }
+
+    .post-mascot {
+      width: 86px;
+      aspect-ratio: 1;
+      float: right;
+      margin: 0 0 10px 14px;
+      border-radius: 22px;
+      object-fit: cover;
+      object-position: center 42%;
+      box-shadow: 0 12px 24px rgba(31, 31, 31, 0.12);
+    }
+
     .activity-card h3 { margin: 0 0 3px; font-size: 0.98rem; }
     .activity-card p { margin-bottom: 0; color: rgba(31, 31, 31, 0.58); font-size: 0.76rem; font-weight: 800; }
     .start-label { align-self: flex-start; border-radius: 999px; padding: 6px 10px; background: rgba(255, 255, 255, 0.48); font-size: 0.72rem; font-weight: 900; }
@@ -835,6 +994,15 @@
       display: grid;
       place-items: center;
       margin-bottom: 5px;
+    }
+
+    .choice-card .choice-art {
+      width: 34px;
+      height: 34px;
+      margin-inline: auto;
+      border-radius: 13px;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.64);
     }
 
     .choice-card svg {
@@ -1227,13 +1395,10 @@
       }
       .summary-card.wide { grid-column: 1 / -1; }
       .quick-grid {
-        grid-auto-flow: column;
-        grid-auto-columns: 146px;
-        grid-template-columns: none;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 10px;
-        overflow-x: auto;
-        padding-bottom: 8px;
-        scrollbar-width: none;
+        overflow: visible;
+        padding-bottom: 0;
       }
       .quick-grid::-webkit-scrollbar { display: none; }
       .metric-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
@@ -1263,6 +1428,49 @@
       }
       .nav-btn.active { background: transparent; }
       .nav-btn.active .nav-icon { background: rgba(0, 0, 0, 0.06); }
+      .welcome-card {
+        min-height: calc(100dvh - 36px);
+        grid-template-columns: 1fr;
+        gap: 18px;
+        padding: 22px;
+      }
+      .welcome-art {
+        order: -1;
+        width: min(100%, 280px);
+        aspect-ratio: 1;
+      }
+      .hero-card {
+        grid-template-columns: 1fr;
+        min-height: auto;
+      }
+      .hero-mascot {
+        width: min(100%, 150px);
+        justify-self: start;
+        order: -1;
+      }
+      .quick-card {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+        min-height: 156px;
+      }
+      .quick-art {
+        grid-column: 1;
+        grid-row: auto;
+        width: 62px;
+        height: 62px;
+        order: -1;
+      }
+      .form-card.illustrated,
+      .card.illustrated {
+        padding-right: 18px;
+      }
+      .panel-mascot {
+        position: static;
+        display: block;
+        width: 86px;
+        margin: 0 0 14px;
+        border-radius: 20px;
+      }
       .modal-layer {
         align-items: end;
         padding: 16px 16px max(94px, env(safe-area-inset-bottom));
@@ -1288,10 +1496,29 @@
       .modal-actions { grid-template-columns: 1fr; }
       .time-picker-grid { gap: 8px; }
       .picker-option { min-height: 40px; padding-inline: 6px; }
+      .welcome-screen { padding: 12px; }
+      .welcome-card { border-radius: 28px; }
+      .welcome-form input { min-height: 52px; }
+      .focus-launch-meta { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
+  <div id="welcomeScreen" class="welcome-screen" aria-labelledby="welcomeTitle">
+    <div class="welcome-card">
+      <div class="welcome-copy">
+        <h1 id="welcomeTitle">Welcome to My Wellness Journey</h1>
+        <p>Start by adding your name. It stays on this device and helps the app feel like your own space.</p>
+        <form id="welcomeForm" class="welcome-form">
+          <label for="welcomeNameInput">Your name</label>
+          <input id="welcomeNameInput" type="text" autocomplete="given-name" maxlength="32" placeholder="Type your name" required />
+          <button class="primary" type="submit">Start My Journey</button>
+        </form>
+      </div>
+      <img class="welcome-art" src="images/hello.png" alt="Friendly Raffles mascot waving hello" />
+    </div>
+  </div>
+
   <div class="device">
     <main class="screen">
       <section id="homePage" class="page active" aria-labelledby="homeTitle">
@@ -1303,8 +1530,11 @@
         <div id="calendarRow" class="calendar-row" aria-label="Current week"></div>
 
         <div class="card hero-card">
-          <h2>My Wellness Journey</h2>
-          <p>Check your mood, protect focus time, and settle into sleep with one calm app.</p>
+          <div class="hero-copy">
+            <h2>My Wellness Journey</h2>
+            <p>Check your mood, protect focus time, and settle into sleep with one calm app.</p>
+          </div>
+          <img class="hero-mascot" src="images/standing.png" alt="" loading="lazy" />
         </div>
 
         <div class="section-head">
@@ -1340,24 +1570,28 @@
         <div class="quick-grid">
           <button class="quick-card" style="--quick-bg:#ffd8d2" type="button" data-page="moodPage" data-mood-tab="moodCheckinPanel">
             <span class="card-icon"><i data-lucide="smile-plus"></i></span>
+            <img class="quick-art" src="images/meditating.png" alt="" loading="lazy" />
             <strong>Mood check-in</strong>
             <p>Start with how you feel right now.</p>
             <span class="pill">Mood</span>
           </button>
           <button class="quick-card" style="--quick-bg:#d5eadc" type="button" data-page="focusPage" data-focus-tab="focusBalancePanel">
             <span class="card-icon"><i data-lucide="smartphone"></i></span>
+            <img class="quick-art" src="images/gaming.png" alt="" loading="lazy" />
             <strong>Log screen time</strong>
             <p>Track social, games, or videos.</p>
             <span class="pill">Focus</span>
           </button>
           <button class="quick-card" style="--quick-bg:#ded5ff" type="button" data-page="focusPage" data-focus-tab="focusStudyPanel">
             <span class="card-icon"><i data-lucide="timer"></i></span>
+            <img class="quick-art" src="images/studying.png" alt="" loading="lazy" />
             <strong>Start focus</strong>
             <p>Settle into one study session.</p>
             <span class="pill">Study</span>
           </button>
           <button class="quick-card" style="--quick-bg:#d7e3ff" type="button" data-page="sleepPage" data-sleep-tab="sleepTonightPanel">
             <span class="card-icon"><i data-lucide="bed"></i></span>
+            <img class="quick-art" src="images/sleeping.png" alt="" loading="lazy" />
             <strong>Bedtime check</strong>
             <p>Plan sleep and breathe slowly.</p>
             <span class="pill">Sleep</span>
@@ -1381,7 +1615,8 @@
         </div>
 
         <div id="moodCheckinPanel" class="tool-panel active">
-          <form id="moodCheckinForm" class="form-card">
+          <form id="moodCheckinForm" class="form-card illustrated">
+            <img class="panel-mascot" src="images/meditating.png" alt="" loading="lazy" />
             <h2>How are you feeling?</h2>
             <p>Save a first mood check before choosing an activity.</p>
 
@@ -1516,9 +1751,9 @@
           <div class="form-card">
             <h2>Add activity</h2>
             <div class="category-grid" role="group" aria-label="Activity category">
-              <button class="choice-card active" type="button" data-focus-category="Social"><span><i data-lucide="smartphone"></i></span>Social</button>
-              <button class="choice-card" type="button" data-focus-category="Gaming"><span><i data-lucide="gamepad-2"></i></span>Games</button>
-              <button class="choice-card" type="button" data-focus-category="Video"><span><i data-lucide="square-play"></i></span>Video</button>
+              <button class="choice-card active" type="button" data-focus-category="Social"><span class="choice-art"><img src="images/standing.png" alt="" loading="lazy" /></span>Social</button>
+              <button class="choice-card" type="button" data-focus-category="Gaming"><span class="choice-art"><img src="images/gaming.png" alt="" loading="lazy" /></span>Games</button>
+              <button class="choice-card" type="button" data-focus-category="Video"><span class="choice-art"><img src="images/studying.png" alt="" loading="lazy" /></span>Video</button>
             </div>
             <div class="field">
               <div class="range-head">
@@ -1541,7 +1776,8 @@
         </div>
 
         <div id="focusStudyPanel" class="tool-panel">
-          <div class="card focus-launch-card">
+          <div class="card focus-launch-card illustrated">
+            <img class="panel-mascot" src="images/studying.png" alt="" loading="lazy" />
             <span class="card-icon"><i data-lucide="timer"></i></span>
             <div>
               <h2>Settle into one task</h2>
@@ -1572,7 +1808,8 @@
         </div>
 
         <div id="sleepTonightPanel" class="tool-panel active">
-          <div id="sleepTonightCard" class="form-card">
+          <div id="sleepTonightCard" class="form-card illustrated">
+            <img class="panel-mascot" src="images/sleeping.png" alt="" loading="lazy" />
             <div class="sleep-status">
               <div>
                 <strong id="sleepStatusTitle">Tonight</strong>
@@ -1740,7 +1977,8 @@
       </div>
     </div>
 
-    <div id="postActivityPanel" class="post-panel" aria-live="polite">
+    <div id="postActivityPanel" class="post-panel illustrated" aria-live="polite">
+      <img class="post-mascot" src="images/meditating.png" alt="" loading="lazy" />
       <h2>Post-activity check</h2>
       <p>Compare how you feel now with your first mood check before this activity.</p>
       <div class="field">
@@ -1834,6 +2072,7 @@
     const ACTIVITY_STORE = "activityCompletions";
     const FOCUS_STORAGE_KEY = "focusFlowV6";
     const SLEEP_STORAGE_KEY = "sleep_checkin_state";
+    const USER_STORAGE_KEY = "myWellnessJourneyUser";
     const FOCUS_DEFAULT_LIMIT = 120;
     const FOCUS_SECONDS = 1500;
 
@@ -1946,6 +2185,7 @@
       entries: [],
       completions: []
     };
+    let appUser = { name: "Student", hasProfile: false };
 
     let focusState = {
       streak: 12,
@@ -1981,20 +2221,54 @@
       return avatarChoices.find(avatar => avatar.id === id) || avatarChoices[0];
     }
 
-    function activityIconName(activity) {
-      const iconMap = {
-        "⏱": "clock",
-        "✍️": "pen-line",
-        "🌬": "wind",
-        "☕": "coffee",
-        "⭐": "sparkles",
-        "🧘": "heart-pulse",
-        "📚": "book-open",
-        "🪁": "move",
-        "📖": "book-open",
-        "🎬": "clapperboard"
-      };
-      return iconMap[activity.icon] || "sparkles";
+    function activityImagePath(activity) {
+      const id = activity.id || "";
+      const title = `${activity.title || ""} ${activity.text || ""}`.toLowerCase();
+      if (id.includes("movement") || id.includes("stretch") || id.includes("push") || id.includes("sprint") || id.includes("challenge")) return "images/exercise.png";
+      if (title.includes("sleep")) return "images/sleeping.png";
+      if (activity.icon === "📚" || activity.icon === "✍️" || title.includes("write") || title.includes("read") || title.includes("task") || title.includes("study")) return "images/studying.png";
+      if (activity.icon === "🧘" || title.includes("breath") || title.includes("calm") || title.includes("scan") || title.includes("meditation") || title.includes("yoga")) return "images/meditating.png";
+      if (activity.icon === "🎬") return "images/gaming.png";
+      return "images/standing.png";
+    }
+
+    function cleanUserName(value) {
+      return String(value || "").trim().replace(/\s+/g, " ").slice(0, 32);
+    }
+
+    function loadUserProfile() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(USER_STORAGE_KEY) || "null");
+        const name = cleanUserName(saved && saved.name);
+        if (name) appUser = { name, hasProfile: true };
+      } catch {
+        appUser = { name: "Student", hasProfile: false };
+      }
+      renderUserName();
+    }
+
+    function renderUserName() {
+      byId("homeTitle").textContent = `Hi, ${appUser.name}`;
+    }
+
+    function showWelcomeIfNeeded() {
+      if (appUser.hasProfile) return;
+      byId("welcomeScreen").classList.add("show");
+      window.setTimeout(() => byId("welcomeNameInput").focus(), 120);
+    }
+
+    function saveWelcomeName(event) {
+      event.preventDefault();
+      const name = cleanUserName(byId("welcomeNameInput").value);
+      if (!name) {
+        appShowToast("Type your name to begin.");
+        return;
+      }
+      appUser = { name, hasProfile: true };
+      localStorage.setItem(USER_STORAGE_KEY, JSON.stringify({ name }));
+      renderUserName();
+      byId("welcomeScreen").classList.remove("show");
+      appShowToast(`Welcome, ${name}.`);
     }
 
     function appShowPage(pageId) {
@@ -2178,7 +2452,7 @@
         : "Save a mood to personalize these self-care practices.";
       byId("moodActivityGrid").innerHTML = moodState.renderedActivities.map(activity => `
         <button class="activity-card" type="button" data-activity="${activity.id}" style="--card-color:${activity.color}">
-          <span class="activity-art"><i data-lucide="${activityIconName(activity)}"></i></span>
+          <span class="activity-art"><img src="${activityImagePath(activity)}" alt="" loading="lazy" /></span>
           <span><h3>${activity.title}</h3><p>${activity.count}</p></span>
           <span class="start-label">Start</span>
         </button>
@@ -2831,6 +3105,7 @@
     }
 
     function bindEvents() {
+      byId("welcomeForm").addEventListener("submit", saveWelcomeName);
       document.querySelectorAll("[data-page]").forEach(btn => {
         btn.addEventListener("click", () => {
           appShowPage(btn.dataset.page);
@@ -2968,6 +3243,7 @@
     }
 
     async function init() {
+      loadUserProfile();
       renderCalendar();
       renderMoodChoices();
       bindEvents();
@@ -2979,6 +3255,7 @@
       renderSleepUi();
       renderMoodActivities("calm");
       await refreshMoodData();
+      showWelcomeIfNeeded();
     }
 
     init().catch(error => {
