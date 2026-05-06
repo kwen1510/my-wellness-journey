@@ -1945,7 +1945,7 @@
         <div id="profileDataPanel" class="tool-panel">
           <div class="data-card">
             <h2>Local data</h2>
-            <p>All check-ins, activities, focus logs, and sleep records are stored on this device.</p>
+            <p>Wellness data is stored in this browser's local database. Your display name is stored separately on this device.</p>
             <button id="exportBtn" class="primary" type="button">Export Combined CSV</button>
           </div>
         </div>
@@ -2069,11 +2069,12 @@
 
   <script>
     const MOOD_DB_NAME = "moodQuestLocal";
-    const MOOD_DB_VERSION = 1;
+    const MOOD_DB_VERSION = 2;
     const MOOD_STORE = "moodEntries";
     const ACTIVITY_STORE = "activityCompletions";
-    const FOCUS_STORAGE_KEY = "focusFlowV6";
-    const SLEEP_STORAGE_KEY = "sleep_checkin_state";
+    const APP_STATE_STORE = "appState";
+    const FOCUS_LEGACY_STORAGE_KEYS = ["focusFlowV6", "focusFlowV5"];
+    const SLEEP_LEGACY_STORAGE_KEY = "sleep_checkin_state";
     const USER_STORAGE_KEY = "myWellnessJourneyUser";
     const FOCUS_DEFAULT_LIMIT = 120;
     const FOCUS_SECONDS = 1500;
@@ -2189,20 +2190,28 @@
     };
     let appUser = { name: "Student", hasProfile: false };
 
-    let focusState = {
-      streak: 12,
-      bankSeconds: 1800,
-      screenTimeLogged: 0,
-      dailyLimit: FOCUS_DEFAULT_LIMIT,
-      lastDate: "",
-      lastLog: null
-    };
+    function defaultFocusState() {
+      return {
+        streak: 12,
+        bankSeconds: 1800,
+        screenTimeLogged: 0,
+        dailyLimit: FOCUS_DEFAULT_LIMIT,
+        lastDate: "",
+        lastLog: null
+      };
+    }
+
+    function defaultSleepState() {
+      return { bedtime: "22:30", activeSleep: null, history: [] };
+    }
+
+    let focusState = defaultFocusState();
     let focusActiveCategory = "Social";
     let focusTimerInterval = null;
     let focusTimerRunning = false;
     let focusTimerSeconds = FOCUS_SECONDS;
 
-    let sleepState = { bedtime: "22:30", activeSleep: null, history: [] };
+    let sleepState = defaultSleepState();
     let sleepTimeDraft = { hour: 10, minute: 30, period: "PM" };
     let sleepClockInterval = null;
 
@@ -2345,6 +2354,9 @@
             store.createIndex("createdAt", "createdAt", { unique: false });
             store.createIndex("moodEntryId", "moodEntryId", { unique: false });
           }
+          if (!database.objectStoreNames.contains(APP_STATE_STORE)) {
+            database.createObjectStore(APP_STATE_STORE, { keyPath: "key" });
+          }
         };
         request.onsuccess = () => resolve(request.result);
         request.onerror = () => reject(request.error);
@@ -2367,6 +2379,45 @@
         request.onsuccess = () => resolve(request.result);
         request.onerror = () => reject(request.error);
       });
+    }
+
+    function appGetStateRecord(key) {
+      return new Promise((resolve, reject) => {
+        const tx = moodDb.transaction(APP_STATE_STORE, "readonly");
+        const request = tx.objectStore(APP_STATE_STORE).get(key);
+        request.onsuccess = () => resolve(request.result ? request.result.value : null);
+        request.onerror = () => reject(request.error);
+      });
+    }
+
+    function appSetStateRecord(key, value) {
+      return new Promise((resolve, reject) => {
+        const tx = moodDb.transaction(APP_STATE_STORE, "readwrite");
+        tx.objectStore(APP_STATE_STORE).put({
+          key,
+          value,
+          updatedAt: new Date().toISOString()
+        });
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => reject(tx.error);
+      });
+    }
+
+    function readLegacyJsonStorage(keys) {
+      for (const key of keys) {
+        const raw = localStorage.getItem(key);
+        if (!raw) continue;
+        try {
+          return JSON.parse(raw);
+        } catch {
+          continue;
+        }
+      }
+      return null;
+    }
+
+    function removeLegacyStorage(keys) {
+      keys.forEach(key => localStorage.removeItem(key));
     }
 
     function moodClearAllRecords() {
@@ -2672,14 +2723,19 @@
       refreshIcons();
     }
 
-    function loadFocusState() {
-      const saved = localStorage.getItem(FOCUS_STORAGE_KEY) || localStorage.getItem("focusFlowV5");
-      if (saved) {
-        try {
-          focusState = { ...focusState, ...JSON.parse(saved) };
-        } catch {
-          appShowToast("Focus data could not be loaded. Starting fresh.");
-        }
+    async function loadFocusState() {
+      let needsPersist = false;
+      try {
+        const indexedState = await appGetStateRecord("focus");
+        const legacyState = indexedState ? null : readLegacyJsonStorage(FOCUS_LEGACY_STORAGE_KEYS);
+        const savedState = indexedState || legacyState;
+        focusState = { ...defaultFocusState(), ...(savedState || {}) };
+        needsPersist = !indexedState;
+      } catch (error) {
+        console.error(error);
+        focusState = defaultFocusState();
+        appShowToast("Focus data could not be loaded. Starting fresh.");
+        needsPersist = true;
       }
       const today = new Date().toDateString();
       if (focusState.lastDate !== today) {
@@ -2687,20 +2743,38 @@
         focusState.dailyLimit = FOCUS_DEFAULT_LIMIT;
         focusState.lastDate = today;
         focusState.lastLog = null;
-        focusState.streak += 1;
-        persistFocusState();
+        focusState.streak = Number(focusState.streak || 0) + 1;
+        needsPersist = true;
+      }
+      let persisted = true;
+      if (needsPersist) {
+        try {
+          await persistFocusState();
+        } catch (error) {
+          console.error(error);
+          appShowToast("Focus data could not be saved.");
+          persisted = false;
+        }
+      }
+      if (persisted) {
+        removeLegacyStorage(FOCUS_LEGACY_STORAGE_KEYS);
       }
     }
 
     function persistFocusState() {
-      localStorage.setItem(FOCUS_STORAGE_KEY, JSON.stringify(focusState));
+      return appSetStateRecord("focus", focusState);
     }
 
-    function saveFocusState() {
-      persistFocusState();
+    async function saveFocusState() {
       renderFocusUi();
       renderHomeDashboard();
       renderProfileDashboard();
+      try {
+        await persistFocusState();
+      } catch (error) {
+        console.error(error);
+        appShowToast("Focus data could not be saved.");
+      }
     }
 
     function renderFocusUi() {
@@ -2727,24 +2801,24 @@
       return "A quiet start. Log only what you need, then return to the day.";
     }
 
-    function submitFocusLog() {
+    async function submitFocusLog() {
       const mins = Number(byId("focusSlider").value);
       focusState.screenTimeLogged += mins;
       focusState.lastLog = { mins, category: focusActiveCategory };
       appShowToast(`Logged ${mins}m of ${focusActiveCategory.toLowerCase()} time.`);
-      saveFocusState();
+      await saveFocusState();
       if (focusState.screenTimeLogged >= focusState.dailyLimit) window.setTimeout(() => byId("focusLimitPanel").classList.add("show"), 450);
     }
 
-    function undoFocusLog() {
+    async function undoFocusLog() {
       if (!focusState.lastLog) return;
       focusState.screenTimeLogged = Math.max(0, focusState.screenTimeLogged - focusState.lastLog.mins);
       appShowToast(`Removed ${focusState.lastLog.mins}m from today.`);
       focusState.lastLog = null;
-      saveFocusState();
+      await saveFocusState();
     }
 
-    function handleFocusLimit(action) {
+    async function handleFocusLimit(action) {
       byId("focusLimitPanel").classList.remove("show");
       if (action === "save") appShowToast("Good reset. Step away and let your eyes rest.");
       if (action === "spend") {
@@ -2762,7 +2836,7 @@
         focusState.dailyLimit += FOCUS_DEFAULT_LIMIT;
         appShowToast("Streak reset. The app will stay quiet for today.");
       }
-      saveFocusState();
+      await saveFocusState();
     }
 
     function toggleFocusTimer() {
@@ -2795,12 +2869,12 @@
       updateFocusTimerUi();
     }
 
-    function finishFocusTimer() {
+    async function finishFocusTimer() {
       window.clearInterval(focusTimerInterval);
       focusState.bankSeconds += 300;
       appShowToast("Session complete. Added 5m to your break bank.");
       resetFocusTimer();
-      saveFocusState();
+      await saveFocusState();
     }
 
     function updateFocusTimerUi() {
@@ -2882,36 +2956,65 @@
       byId("sleepTimeModal").classList.remove("show");
     }
 
-    function saveSleepTime() {
+    async function saveSleepTime() {
       sleepState.bedtime = sleepTimeToValue(sleepTimeDraft);
-      persistSleepState();
-      renderSleepUi();
       closeSleepTimeModal();
-      appShowToast("Bedtime updated.");
+      await saveSleepState("Bedtime updated.");
     }
 
-    function loadSleepState() {
+    async function loadSleepState() {
+      let needsPersist = false;
       try {
-        sleepState = JSON.parse(localStorage.getItem(SLEEP_STORAGE_KEY)) || sleepState;
-      } catch {
-        sleepState = { bedtime: "22:30", activeSleep: null, history: [] };
+        const indexedState = await appGetStateRecord("sleep");
+        const legacyState = indexedState ? null : readLegacyJsonStorage([SLEEP_LEGACY_STORAGE_KEY]);
+        const savedState = indexedState || legacyState;
+        sleepState = { ...defaultSleepState(), ...(savedState || {}) };
+        sleepState.history = Array.isArray(sleepState.history) ? sleepState.history : [];
+        needsPersist = !indexedState;
+      } catch (error) {
+        console.error(error);
+        sleepState = defaultSleepState();
+        appShowToast("Sleep data could not be loaded. Starting fresh.");
+        needsPersist = true;
+      }
+      let persisted = true;
+      if (needsPersist) {
+        try {
+          await persistSleepState();
+        } catch (error) {
+          console.error(error);
+          appShowToast("Sleep data could not be saved.");
+          persisted = false;
+        }
+      }
+      if (persisted) {
+        removeLegacyStorage([SLEEP_LEGACY_STORAGE_KEY]);
       }
       renderSleepTimeButton();
     }
 
     function persistSleepState() {
-      localStorage.setItem(SLEEP_STORAGE_KEY, JSON.stringify(sleepState));
+      return appSetStateRecord("sleep", sleepState);
     }
 
-    function startSleep() {
+    async function saveSleepState(message) {
+      renderSleepUi();
+      try {
+        await persistSleepState();
+        if (message) appShowToast(message);
+      } catch (error) {
+        console.error(error);
+        appShowToast("Sleep data could not be saved.");
+      }
+    }
+
+    async function startSleep() {
       sleepState.bedtime = sleepState.bedtime || "22:30";
       sleepState.activeSleep = { startedAt: Date.now(), plannedBedtime: sleepState.bedtime };
-      persistSleepState();
-      renderSleepUi();
-      appShowToast("Sleep check-in started.");
+      await saveSleepState("Sleep check-in started.");
     }
 
-    function wakeSleep() {
+    async function wakeSleep() {
       if (!sleepState.activeSleep) return;
       const endedAt = Date.now();
       const startedAt = sleepState.activeSleep.startedAt;
@@ -2924,10 +3027,8 @@
       });
       sleepState.history = sleepState.history.slice(0, 30);
       sleepState.activeSleep = null;
-      persistSleepState();
-      renderSleepUi();
+      await saveSleepState("Wake-up check-in saved.");
       switchPanel("sleep", "sleepDashboardPanel");
-      appShowToast("Wake-up check-in saved.");
     }
 
     function playSleepVideo() {
@@ -3250,9 +3351,9 @@
       renderMoodChoices();
       bindEvents();
       setMoodAvatar(moodState.avatar);
-      loadFocusState();
-      loadSleepState();
       moodDb = await openMoodDb();
+      await loadFocusState();
+      await loadSleepState();
       renderFocusUi();
       renderSleepUi();
       renderMoodActivities("calm");
