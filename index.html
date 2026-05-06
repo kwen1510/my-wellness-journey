@@ -33,11 +33,9 @@
       margin: 0;
       min-height: 100vh;
       color: var(--ink);
-      background: var(--outside-bg);
+      background: var(--app-bg);
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Arial, sans-serif;
-      display: grid;
-      place-items: center;
-      padding: 18px;
+      padding: 0;
     }
 
     button, input, select { font: inherit; }
@@ -57,7 +55,7 @@
 
     h1 {
       margin-bottom: 0;
-      font-size: 1.9rem;
+      font-size: clamp(2rem, 3vw, 3.4rem);
       line-height: 1.05;
       letter-spacing: 0;
       font-weight: 850;
@@ -83,22 +81,23 @@
     }
 
     .device {
-      width: min(100%, 420px);
-      height: min(920px, calc(100vh - 36px));
-      min-height: 720px;
+      width: 100%;
+      height: 100vh;
+      min-height: 100vh;
       overflow: hidden;
-      display: flex;
-      flex-direction: column;
+      display: grid;
+      grid-template-columns: 232px minmax(0, 1fr);
+      grid-template-rows: minmax(0, 1fr);
       background: var(--app-bg);
-      border-radius: 38px;
-      box-shadow: var(--shadow);
+      border-radius: 0;
+      box-shadow: none;
       position: relative;
     }
 
     .statusbar {
       height: 48px;
       flex: 0 0 auto;
-      display: flex;
+      display: none;
       align-items: center;
       justify-content: space-between;
       padding: 0 25px;
@@ -114,10 +113,11 @@
     }
 
     .screen {
-      flex: 1;
       overflow: auto;
-      padding: 0 18px 18px;
+      padding: 34px clamp(22px, 4vw, 56px);
       scrollbar-width: none;
+      min-width: 0;
+      min-height: 0;
     }
 
     .screen::-webkit-scrollbar { display: none; }
@@ -126,6 +126,12 @@
     .page.active, .tool-panel.active {
       display: block;
       animation: pageIn 0.18s ease;
+    }
+
+    .page {
+      width: min(100%, 1360px);
+      margin: 0 auto;
+      padding-bottom: 34px;
     }
 
     @keyframes pageIn {
@@ -138,7 +144,7 @@
       align-items: center;
       justify-content: space-between;
       gap: 14px;
-      margin-bottom: 18px;
+      margin-bottom: 24px;
     }
 
     .profile-dot {
@@ -208,7 +214,7 @@
     }
 
     .hero-card {
-      min-height: 148px;
+      min-height: clamp(170px, 24vh, 260px);
       display: grid;
       align-content: end;
       overflow: hidden;
@@ -251,8 +257,8 @@
 
     .summary-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 14px;
     }
 
     .summary-card {
@@ -265,7 +271,7 @@
     }
 
     .summary-card.wide {
-      grid-column: 1 / -1;
+      grid-column: span 2;
       display: grid;
       grid-template-columns: auto 1fr;
       gap: 12px;
@@ -286,12 +292,8 @@
 
     .quick-grid {
       display: grid;
-      grid-auto-flow: column;
-      grid-auto-columns: 146px;
-      gap: 10px;
-      overflow-x: auto;
-      padding-bottom: 8px;
-      scrollbar-width: none;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
     }
 
     .quick-grid::-webkit-scrollbar { display: none; }
@@ -401,7 +403,7 @@
     .mood-grid { grid-template-columns: repeat(2, 1fr); }
     .score-grid { grid-template-columns: repeat(5, 1fr); }
     .activity-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-    .metric-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .metric-grid { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
 
     .avatar-btn,
     .score-btn {
@@ -800,23 +802,40 @@
     .support-card.gold { background: #f3e6b3; }
 
     .bottom-nav {
-      flex: 0 0 auto;
-      height: 82px;
+      grid-column: 1;
+      grid-row: 1;
+      height: 100%;
       display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      align-items: center;
-      padding: 4px 14px 15px;
-      background: var(--app-bg);
-      border-top: 1px solid rgba(0, 0, 0, 0.03);
+      grid-template-columns: 1fr;
+      align-content: start;
+      gap: 8px;
+      padding: 28px 18px;
+      background: rgba(255, 255, 255, 0.52);
+      border-right: 1px solid rgba(0, 0, 0, 0.05);
+      border-top: 0;
+    }
+
+    .bottom-nav::before {
+      content: "My Wellness Journey";
+      display: block;
+      padding: 4px 10px 18px;
+      color: var(--ink);
+      font-size: 1.1rem;
+      line-height: 1.05;
+      font-weight: 900;
     }
 
     .nav-btn {
       min-width: 0;
-      display: grid;
-      justify-items: center;
-      gap: 4px;
+      min-height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 12px;
+      padding: 0 14px;
+      border-radius: 18px;
       color: #8f8a84;
-      font-size: 0.64rem;
+      font-size: 0.9rem;
       font-weight: 850;
     }
 
@@ -831,8 +850,12 @@
       line-height: 1;
     }
 
-    .nav-btn.active { color: var(--ink); }
-    .nav-btn.active .nav-icon { background: rgba(0, 0, 0, 0.06); }
+    .nav-btn.active {
+      color: var(--ink);
+      background: rgba(0, 0, 0, 0.05);
+    }
+
+    .nav-btn.active .nav-icon { background: var(--yellow); }
 
     .toast {
       position: fixed;
@@ -858,11 +881,95 @@
       transform: translate(-50%, 0);
     }
 
-    @media (max-width: 520px) {
-      body { padding: 0; background: var(--app-bg); }
-      .device { width: 100%; height: 100vh; min-height: 100vh; border-radius: 0; box-shadow: none; }
-      .statusbar { padding-top: env(safe-area-inset-top); }
-      .bottom-nav { padding-bottom: max(15px, env(safe-area-inset-bottom)); }
+    @media (min-width: 960px) {
+      .screen { grid-column: 2; grid-row: 1; }
+      .hero-card,
+      .card,
+      .form-card,
+      .data-card,
+      .support-card,
+      .details-card {
+        padding: clamp(20px, 2.5vw, 30px);
+      }
+      .mood-grid,
+      .activity-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .score-grid { grid-template-columns: repeat(10, minmax(0, 1fr)); }
+      #profileTrendsPanel .metric-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+      #sleepDashboardPanel .metric-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+      .tip-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .chart-wrap { height: 260px; }
+      .timer-panel,
+      .post-panel,
+      .limit-panel {
+        left: calc(50% + 116px);
+        right: auto;
+        bottom: 32px;
+        width: min(560px, calc(100vw - 304px));
+        transform: translateX(-50%);
+      }
+    }
+
+    @media (max-width: 959px) {
+      .device {
+        min-height: 100dvh;
+        height: 100dvh;
+        display: flex;
+        flex-direction: column;
+      }
+      .statusbar {
+        display: flex;
+        padding-top: env(safe-area-inset-top);
+      }
+      .screen {
+        flex: 1;
+        padding: 0 18px 18px;
+      }
+      .page {
+        width: 100%;
+        padding-bottom: 18px;
+      }
+      .summary-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+      .summary-card.wide { grid-column: 1 / -1; }
+      .quick-grid {
+        grid-auto-flow: column;
+        grid-auto-columns: 146px;
+        grid-template-columns: none;
+        gap: 10px;
+        overflow-x: auto;
+        padding-bottom: 8px;
+        scrollbar-width: none;
+      }
+      .quick-grid::-webkit-scrollbar { display: none; }
+      .metric-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+      .bottom-nav {
+        flex: 0 0 auto;
+        height: 82px;
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        align-items: center;
+        gap: 0;
+        padding: 4px 14px max(15px, env(safe-area-inset-bottom));
+        background: var(--app-bg);
+        border-top: 1px solid rgba(0, 0, 0, 0.03);
+        border-right: 0;
+      }
+      .bottom-nav::before { display: none; }
+      .nav-btn {
+        min-height: auto;
+        display: grid;
+        justify-items: center;
+        justify-content: center;
+        gap: 4px;
+        padding: 0;
+        border-radius: 0;
+        font-size: 0.64rem;
+        background: transparent;
+      }
+      .nav-btn.active { background: transparent; }
+      .nav-btn.active .nav-icon { background: rgba(0, 0, 0, 0.06); }
     }
 
     @media (max-width: 390px) {
