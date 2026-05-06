@@ -389,6 +389,44 @@
       font-weight: 800;
     }
 
+    .time-button {
+      width: 100%;
+      min-height: 76px;
+      border-radius: 22px;
+      padding: 13px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      text-align: left;
+      background: #f1efec;
+      box-shadow: inset 0 0 0 1px rgba(31, 31, 31, 0.03);
+    }
+
+    .time-button small {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--muted);
+      font-size: 0.74rem;
+      font-weight: 850;
+    }
+
+    .time-button strong {
+      display: block;
+      color: var(--ink);
+      font-size: clamp(1.22rem, 2.2vw, 1.55rem);
+      line-height: 1;
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .time-button svg {
+      width: 22px;
+      height: 22px;
+      flex: 0 0 auto;
+      stroke-width: 2.35;
+    }
+
     input[type="range"] {
       width: 100%;
       accent-color: var(--yellow);
@@ -575,6 +613,51 @@
     .timer-panel.show,
     .post-panel.show,
     .limit-panel.show { display: block; }
+
+    .modal-layer {
+      position: fixed;
+      inset: 0;
+      z-index: 30;
+      display: none;
+      place-items: center;
+      padding: clamp(18px, 4vw, 42px);
+      background: rgba(31, 31, 31, 0.26);
+      backdrop-filter: blur(8px);
+    }
+
+    .modal-layer.show { display: grid; }
+
+    .modal-dialog {
+      width: min(100%, 540px);
+      max-height: min(760px, calc(100dvh - 40px));
+      overflow: auto;
+      border-radius: 30px;
+      padding: clamp(20px, 3vw, 28px);
+      background: rgba(255, 255, 255, 0.98);
+      box-shadow: 0 28px 70px rgba(49, 44, 39, 0.26);
+    }
+
+    .modal-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .modal-head h2 { margin-bottom: 4px; }
+    .modal-head p { margin-bottom: 0; }
+    .modal-head .round-btn { width: 40px; height: 40px; }
+
+    .modal-actions {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .modal-actions .primary,
+    .modal-actions .secondary { margin-top: 0; }
 
     .tag-row { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 12px; }
     .tag { color: #5a4b36; background: #f3ead7; }
@@ -803,6 +886,39 @@
       font-weight: 850;
     }
 
+    .focus-launch-card {
+      display: grid;
+      gap: 14px;
+    }
+
+    .focus-launch-card .card-icon {
+      margin-bottom: 0;
+      color: var(--green-dark);
+      background: #f1efec;
+    }
+
+    .focus-launch-card p { margin-bottom: 0; }
+    .focus-launch-card .primary { margin-top: 2px; }
+
+    .focus-launch-meta {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .focus-modal-dialog { text-align: center; }
+
+    .focus-modal-dialog .focus-ring {
+      width: min(72vw, 278px);
+      max-width: 278px;
+      margin: 10px auto 18px;
+    }
+
+    .timer-note {
+      width: min(100%, 390px);
+      margin: 0 auto 16px;
+    }
+
     .sleep-status {
       display: flex;
       align-items: center;
@@ -874,16 +990,104 @@
       overflow-wrap: anywhere;
     }
 
-    details.details-card { padding: 0; overflow: hidden; }
+    details.details-card { padding: 0; overflow: hidden; margin-bottom: 0; }
     details.details-card summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
       cursor: pointer;
       list-style: none;
-      padding: 16px 18px;
+      padding: 18px 20px;
       font-size: 0.92rem;
       font-weight: 900;
     }
+
+    details.details-card summary::after {
+      content: "+";
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      color: #5f5954;
+      background: #f1efec;
+      font-size: 1rem;
+      line-height: 1;
+    }
+
+    details.details-card[open] summary::after { content: "-"; }
     details.details-card summary::-webkit-details-marker { display: none; }
-    .details-body { padding: 0 18px 18px; }
+    .details-body { padding: 0 20px 20px; }
+
+    #profileTrendsPanel.active,
+    #profileSupportPanel.active,
+    #profileDataPanel.active {
+      display: grid;
+      gap: 18px;
+    }
+
+    #profileTrendsPanel > .metric-grid {
+      gap: 14px;
+      margin-bottom: 2px;
+    }
+
+    #profileTrendsPanel .mini-chart {
+      min-height: clamp(156px, 20vw, 220px);
+    }
+
+    .time-picker-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .picker-column { min-width: 0; }
+    .picker-column label { text-align: center; }
+
+    .picker-options {
+      max-height: 238px;
+      overflow: auto;
+      display: grid;
+      gap: 8px;
+      padding: 6px;
+      border-radius: 22px;
+      background: #f1efec;
+      scrollbar-width: none;
+    }
+
+    .picker-options::-webkit-scrollbar { display: none; }
+
+    .picker-option {
+      min-height: 42px;
+      border-radius: 15px;
+      padding: 0 8px;
+      color: #5f5954;
+      background: var(--white);
+      font-size: 0.92rem;
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .picker-option.active {
+      color: #332c22;
+      background: var(--yellow);
+      box-shadow: inset 0 0 0 3px rgba(31, 31, 31, 0.08);
+    }
+
+    .bedtime-preview {
+      min-height: 70px;
+      border-radius: 22px;
+      display: grid;
+      place-items: center;
+      color: var(--green-dark);
+      background: #d5eadc;
+      font-size: clamp(1.55rem, 4vw, 2.05rem);
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+    }
 
     .support-card.urgent { background: #ffe7e4; }
     .support-card.green { background: #d5eadc; }
@@ -987,7 +1191,7 @@
       .mood-grid,
       .activity-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
       .score-grid { grid-template-columns: repeat(10, minmax(0, 1fr)); }
-      #profileTrendsPanel .metric-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+      #profileTrendsPanel > .metric-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); }
       #sleepDashboardPanel .metric-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
       .tip-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .chart-wrap { height: 260px; }
@@ -1059,6 +1263,16 @@
       }
       .nav-btn.active { background: transparent; }
       .nav-btn.active .nav-icon { background: rgba(0, 0, 0, 0.06); }
+      .modal-layer {
+        align-items: end;
+        padding: 16px 16px max(94px, env(safe-area-inset-bottom));
+      }
+      .modal-dialog {
+        width: 100%;
+        max-height: calc(100dvh - 116px);
+        border-radius: 28px;
+      }
+      .picker-options { max-height: 218px; }
     }
 
     @media (max-width: 390px) {
@@ -1071,6 +1285,9 @@
       .score-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
       h1 { font-size: 1.65rem; }
       .focus-clock { font-size: 2.8rem; }
+      .modal-actions { grid-template-columns: 1fr; }
+      .time-picker-grid { gap: 8px; }
+      .picker-option { min-height: 40px; padding-inline: 6px; }
     }
   </style>
 </head>
@@ -1324,17 +1541,17 @@
         </div>
 
         <div id="focusStudyPanel" class="tool-panel">
-          <div class="card" style="text-align:center">
-            <h2>Settle into one task</h2>
-            <div id="focusTimerRing" class="focus-ring" style="--timer-progress:0%">
-              <div class="focus-core">
-                <div id="focusClock" class="focus-clock">25:00</div>
-                <div id="focusTimerState" class="focus-state">Ready</div>
-              </div>
+          <div class="card focus-launch-card">
+            <span class="card-icon"><i data-lucide="timer"></i></span>
+            <div>
+              <h2>Settle into one task</h2>
+              <p>A completed focus session adds five minutes to your break bank.</p>
             </div>
-            <p>A completed focus session adds five minutes to your break bank.</p>
-            <button class="primary" id="focusTimerBtn" type="button">Start focus</button>
-            <button class="secondary" id="focusResetBtn" type="button">Reset timer</button>
+            <div class="focus-launch-meta">
+              <div class="metric-card" style="--metric-bg:#d5eadc"><span>Timer</span><strong id="focusLaunchClock">25:00</strong></div>
+              <div class="metric-card" style="--metric-bg:#ffe4a3"><span>Status</span><strong id="focusLaunchState">Ready</strong></div>
+            </div>
+            <button class="primary" id="openFocusTimerBtn" type="button">Open Focus Timer</button>
           </div>
         </div>
       </section>
@@ -1365,8 +1582,14 @@
             </div>
 
             <div id="sleepSetupFlow">
-              <label for="sleepBedtime">Planned bedtime</label>
-              <input type="time" id="sleepBedtime" value="22:30" />
+              <label id="sleepBedtimeLabel">Planned bedtime</label>
+              <button type="button" class="time-button" id="sleepBedtimeButton" aria-labelledby="sleepBedtimeLabel sleepBedtimeDisplay">
+                <span>
+                  <small>Tap to adjust</small>
+                  <strong id="sleepBedtimeDisplay">10:30 PM</strong>
+                </span>
+                <i data-lucide="clock"></i>
+              </button>
               <button type="button" class="secondary" id="sleepPlayVideoBtn">Play Deep Breathing Video</button>
               <iframe id="sleepBreathingVideo" class="video-frame hidden" title="Deep breathing video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
               <button type="button" class="primary" id="sleepStartBtn">I'm sleeping now</button>
@@ -1419,20 +1642,12 @@
         </div>
 
         <div class="tabs" style="--tab-count:3" data-tabs="profile">
-          <button class="tab-btn active" type="button" data-panel="profileDataPanel">Data</button>
-          <button class="tab-btn" type="button" data-panel="profileTrendsPanel">Trends</button>
+          <button class="tab-btn active" type="button" data-panel="profileTrendsPanel">Trends</button>
           <button class="tab-btn" type="button" data-panel="profileSupportPanel">Support</button>
+          <button class="tab-btn" type="button" data-panel="profileDataPanel">Data</button>
         </div>
 
-        <div id="profileDataPanel" class="tool-panel active">
-          <div class="data-card">
-            <h2>Local data</h2>
-            <p>All check-ins, activities, focus logs, and sleep records are stored on this device.</p>
-            <button id="exportBtn" class="primary" type="button">Export Combined CSV</button>
-          </div>
-        </div>
-
-        <div id="profileTrendsPanel" class="tool-panel">
+        <div id="profileTrendsPanel" class="tool-panel active">
           <div class="metric-grid">
             <div class="metric-card" style="--metric-bg:#d5eadc"><span>Check-ins</span><strong id="dashCheckins">0</strong></div>
             <div class="metric-card" style="--metric-bg:#ffe4a3"><span>Streak</span><strong id="dashStreak">0d</strong></div>
@@ -1487,6 +1702,14 @@
             <p>Write one sentence: "I need help with..." Then show it to the person you choose.</p>
           </div>
         </div>
+
+        <div id="profileDataPanel" class="tool-panel">
+          <div class="data-card">
+            <h2>Local data</h2>
+            <p>All check-ins, activities, focus logs, and sleep records are stored on this device.</p>
+            <button id="exportBtn" class="primary" type="button">Export Combined CSV</button>
+          </div>
+        </div>
       </section>
     </main>
 
@@ -1495,7 +1718,7 @@
       <button class="nav-btn" type="button" data-page="moodPage"><span class="nav-icon"><i data-lucide="smile"></i></span><span>Mood</span></button>
       <button class="nav-btn" type="button" data-page="focusPage"><span class="nav-icon"><i data-lucide="timer"></i></span><span>Focus</span></button>
       <button class="nav-btn" type="button" data-page="sleepPage"><span class="nav-icon"><i data-lucide="moon"></i></span><span>Sleep</span></button>
-      <button class="nav-btn" type="button" data-page="profilePage"><span class="nav-icon"><i data-lucide="user-round"></i></span><span>Profile</span></button>
+      <button class="nav-btn" type="button" data-page="profilePage" data-profile-tab="trends"><span class="nav-icon"><i data-lucide="user-round"></i></span><span>Profile</span></button>
     </nav>
 
     <div id="moodTimerPanel" class="timer-panel" aria-live="polite">
@@ -1548,6 +1771,57 @@
       <button class="primary" type="button" data-focus-limit-action="save">Close apps and reset</button>
       <button class="secondary" type="button" data-focus-limit-action="spend">Use 15m break bank</button>
       <button class="danger-btn" type="button" data-focus-limit-action="ignore">Continue for today</button>
+    </div>
+
+    <div id="focusTimerModal" class="modal-layer" role="dialog" aria-modal="true" aria-labelledby="focusTimerTitle">
+      <div class="modal-dialog focus-modal-dialog">
+        <div class="modal-head">
+          <div>
+            <h2 id="focusTimerTitle">Focus Timer</h2>
+            <p>Stay with one task until the timer finishes.</p>
+          </div>
+          <button id="closeFocusTimerBtn" class="round-btn" type="button" aria-label="Close focus timer"><i data-lucide="x"></i></button>
+        </div>
+        <div id="focusTimerRing" class="focus-ring" style="--timer-progress:0%">
+          <div class="focus-core">
+            <div id="focusClock" class="focus-clock">25:00</div>
+            <div id="focusTimerState" class="focus-state">Ready</div>
+          </div>
+        </div>
+        <p class="timer-note">When the session completes, five minutes are added to your break bank.</p>
+        <div class="modal-actions">
+          <button class="primary" id="focusTimerBtn" type="button">Start focus</button>
+          <button class="secondary" id="focusResetBtn" type="button">Reset timer</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="sleepTimeModal" class="modal-layer" role="dialog" aria-modal="true" aria-labelledby="sleepTimeTitle">
+      <div class="modal-dialog">
+        <div class="modal-head">
+          <div>
+            <h2 id="sleepTimeTitle">Choose Bedtime</h2>
+            <p>Set the time you plan to settle down tonight.</p>
+          </div>
+          <button id="closeSleepTimeBtn" class="round-btn" type="button" aria-label="Close bedtime picker"><i data-lucide="x"></i></button>
+        </div>
+        <div id="sleepTimePreview" class="bedtime-preview">10:30 PM</div>
+        <div class="time-picker-grid" aria-label="Bedtime picker">
+          <div class="picker-column">
+            <label>Hour</label>
+            <div id="sleepHourOptions" class="picker-options"></div>
+          </div>
+          <div class="picker-column">
+            <label>Minute</label>
+            <div id="sleepMinuteOptions" class="picker-options"></div>
+          </div>
+          <div class="picker-column">
+            <label>AM/PM</label>
+            <div id="sleepPeriodOptions" class="picker-options"></div>
+          </div>
+        </div>
+        <button id="saveSleepTimeBtn" class="primary" type="button">Save Bedtime</button>
+      </div>
     </div>
   </div>
 
@@ -1687,6 +1961,7 @@
     let focusTimerSeconds = FOCUS_SECONDS;
 
     let sleepState = { bedtime: "22:30", activeSleep: null, history: [] };
+    let sleepTimeDraft = { hour: 10, minute: 30, period: "PM" };
     let sleepClockInterval = null;
 
     function appShowToast(message) {
@@ -1728,6 +2003,8 @@
       byId("moodTimerPanel").classList.remove("show");
       byId("postActivityPanel").classList.remove("show");
       byId("focusLimitPanel").classList.remove("show");
+      byId("focusTimerModal").classList.remove("show");
+      byId("sleepTimeModal").classList.remove("show");
       if (pageId === "profilePage") renderProfileDashboard();
       if (pageId === "sleepPage") renderSleepDashboard();
       document.querySelector(".screen").scrollTo({ top: 0, behavior: "smooth" });
@@ -1739,7 +2016,7 @@
         mood: ["moodCheckinPanel", "moodActivitiesPanel", "moodJournalPanel"],
         focus: ["focusBalancePanel", "focusStudyPanel"],
         sleep: ["sleepTonightPanel", "sleepTipsPanel", "sleepDashboardPanel"],
-        profile: ["profileDataPanel", "profileTrendsPanel", "profileSupportPanel"]
+        profile: ["profileTrendsPanel", "profileSupportPanel", "profileDataPanel"]
       }[group];
       panels.forEach(id => byId(id).classList.toggle("active", id === panelId));
       if (panelId === "sleepDashboardPanel") renderSleepDashboard();
@@ -2217,6 +2494,7 @@
         focusTimerRunning = true;
         byId("focusTimerBtn").textContent = "Pause focus";
         byId("focusTimerState").textContent = "In progress";
+        byId("focusLaunchState").textContent = "In progress";
         focusTimerInterval = window.setInterval(() => {
           focusTimerSeconds -= 1;
           updateFocusTimerUi();
@@ -2228,6 +2506,7 @@
       focusTimerRunning = false;
       byId("focusTimerBtn").textContent = "Resume focus";
       byId("focusTimerState").textContent = "Paused";
+      byId("focusLaunchState").textContent = "Paused";
     }
 
     function resetFocusTimer() {
@@ -2236,6 +2515,7 @@
       focusTimerSeconds = FOCUS_SECONDS;
       byId("focusTimerBtn").textContent = "Start focus";
       byId("focusTimerState").textContent = "Ready";
+      byId("focusLaunchState").textContent = "Ready";
       updateFocusTimerUi();
     }
 
@@ -2250,8 +2530,88 @@
     function updateFocusTimerUi() {
       const elapsed = FOCUS_SECONDS - focusTimerSeconds;
       const percent = Math.max(0, Math.min(100, (elapsed / FOCUS_SECONDS) * 100));
-      byId("focusClock").textContent = formatSeconds(focusTimerSeconds);
+      const timeLabel = formatSeconds(focusTimerSeconds);
+      byId("focusClock").textContent = timeLabel;
+      byId("focusLaunchClock").textContent = timeLabel;
       byId("focusTimerRing").style.setProperty("--timer-progress", `${percent}%`);
+    }
+
+    function openFocusTimerModal() {
+      updateFocusTimerUi();
+      byId("focusTimerModal").classList.add("show");
+      refreshIcons();
+    }
+
+    function closeFocusTimerModal() {
+      byId("focusTimerModal").classList.remove("show");
+    }
+
+    function parseSleepTime(value) {
+      const [hourText, minuteText] = String(value || "22:30").split(":");
+      let hour24 = Number(hourText);
+      let minute = Number(minuteText);
+      if (!Number.isFinite(hour24)) hour24 = 22;
+      if (!Number.isFinite(minute)) minute = 30;
+      hour24 = ((Math.round(hour24) % 24) + 24) % 24;
+      minute = Math.max(0, Math.min(59, Math.round(minute)));
+      return {
+        hour: hour24 % 12 || 12,
+        minute,
+        period: hour24 >= 12 ? "PM" : "AM"
+      };
+    }
+
+    function sleepTimeToValue(time) {
+      let hour24 = Number(time.hour) % 12;
+      if (time.period === "PM") hour24 += 12;
+      return `${String(hour24).padStart(2, "0")}:${String(Number(time.minute)).padStart(2, "0")}`;
+    }
+
+    function formatSleepTime(value) {
+      const time = parseSleepTime(value);
+      return `${time.hour}:${String(time.minute).padStart(2, "0")} ${time.period}`;
+    }
+
+    function renderSleepTimeButton() {
+      const label = formatSleepTime(sleepState.bedtime || "22:30");
+      byId("sleepBedtimeDisplay").textContent = label;
+      byId("sleepMetricBedtime").textContent = label;
+    }
+
+    function renderSleepTimeOptions() {
+      byId("sleepTimePreview").textContent = `${sleepTimeDraft.hour}:${String(sleepTimeDraft.minute).padStart(2, "0")} ${sleepTimeDraft.period}`;
+      byId("sleepHourOptions").innerHTML = Array.from({ length: 12 }, (_, index) => index + 1).map(hour => `
+        <button class="picker-option ${sleepTimeDraft.hour === hour ? "active" : ""}" type="button" data-sleep-hour="${hour}">${hour}</button>
+      `).join("");
+      byId("sleepMinuteOptions").innerHTML = Array.from({ length: 60 }, (_, minute) => `
+        <button class="picker-option ${sleepTimeDraft.minute === minute ? "active" : ""}" type="button" data-sleep-minute="${minute}">${String(minute).padStart(2, "0")}</button>
+      `).join("");
+      byId("sleepPeriodOptions").innerHTML = ["AM", "PM"].map(period => `
+        <button class="picker-option ${sleepTimeDraft.period === period ? "active" : ""}" type="button" data-sleep-period="${period}">${period}</button>
+      `).join("");
+      window.requestAnimationFrame(() => {
+        ["sleepHourOptions", "sleepMinuteOptions", "sleepPeriodOptions"].forEach(id => {
+          byId(id).querySelector(".active")?.scrollIntoView({ block: "center" });
+        });
+      });
+    }
+
+    function openSleepTimeModal() {
+      sleepTimeDraft = parseSleepTime(sleepState.bedtime || "22:30");
+      renderSleepTimeOptions();
+      byId("sleepTimeModal").classList.add("show");
+    }
+
+    function closeSleepTimeModal() {
+      byId("sleepTimeModal").classList.remove("show");
+    }
+
+    function saveSleepTime() {
+      sleepState.bedtime = sleepTimeToValue(sleepTimeDraft);
+      persistSleepState();
+      renderSleepUi();
+      closeSleepTimeModal();
+      appShowToast("Bedtime updated.");
     }
 
     function loadSleepState() {
@@ -2260,7 +2620,7 @@
       } catch {
         sleepState = { bedtime: "22:30", activeSleep: null, history: [] };
       }
-      byId("sleepBedtime").value = sleepState.bedtime || "22:30";
+      renderSleepTimeButton();
     }
 
     function persistSleepState() {
@@ -2268,7 +2628,7 @@
     }
 
     function startSleep() {
-      sleepState.bedtime = byId("sleepBedtime").value || "22:30";
+      sleepState.bedtime = sleepState.bedtime || "22:30";
       sleepState.activeSleep = { startedAt: Date.now(), plannedBedtime: sleepState.bedtime };
       persistSleepState();
       renderSleepUi();
@@ -2301,7 +2661,7 @@
     }
 
     function renderSleepUi() {
-      byId("sleepMetricBedtime").textContent = sleepState.bedtime || "22:30";
+      renderSleepTimeButton();
       if (sleepState.activeSleep) {
         const start = new Date(sleepState.activeSleep.startedAt);
         byId("sleepSetupFlow").classList.add("hidden");
@@ -2316,7 +2676,7 @@
         byId("sleepFlow").classList.add("hidden");
         byId("sleepTonightCard").classList.remove("sleeping");
         byId("sleepStatusTitle").textContent = "Tonight";
-        byId("sleepStatusDetail").textContent = `Planned bedtime: ${sleepState.bedtime || "22:30"}`;
+        byId("sleepStatusDetail").textContent = `Planned bedtime: ${formatSleepTime(sleepState.bedtime || "22:30")}`;
         byId("sleepStatusMark").textContent = "Ready";
       }
       renderSleepDashboard();
@@ -2354,7 +2714,7 @@
             <strong>${item.durationHours}h sleep</strong>
             <small>${ended.toLocaleDateString([], { weekday: "short", month: "short", day: "numeric" })} • ${formatClock(started)}-${formatClock(ended)}</small>
           </div>
-          <span class="pill">${item.plannedBedtime || "--"}</span>
+          <span class="pill">${item.plannedBedtime ? formatSleepTime(item.plannedBedtime) : "--"}</span>
         </div>
       `;
     }
@@ -2558,18 +2918,47 @@
       });
       byId("focusSaveLogBtn").addEventListener("click", submitFocusLog);
       byId("focusUndoBtn").addEventListener("click", undoFocusLog);
+      byId("openFocusTimerBtn").addEventListener("click", openFocusTimerModal);
+      byId("closeFocusTimerBtn").addEventListener("click", closeFocusTimerModal);
+      byId("focusTimerModal").addEventListener("click", event => {
+        if (event.target === byId("focusTimerModal")) closeFocusTimerModal();
+      });
       byId("focusTimerBtn").addEventListener("click", toggleFocusTimer);
       byId("focusResetBtn").addEventListener("click", resetFocusTimer);
       document.querySelectorAll("[data-focus-limit-action]").forEach(btn => btn.addEventListener("click", () => handleFocusLimit(btn.dataset.focusLimitAction)));
 
-      byId("sleepBedtime").addEventListener("change", event => {
-        sleepState.bedtime = event.target.value || "22:30";
-        persistSleepState();
-        renderSleepUi();
+      byId("sleepBedtimeButton").addEventListener("click", openSleepTimeModal);
+      byId("closeSleepTimeBtn").addEventListener("click", closeSleepTimeModal);
+      byId("sleepTimeModal").addEventListener("click", event => {
+        if (event.target === byId("sleepTimeModal")) closeSleepTimeModal();
       });
+      byId("sleepHourOptions").addEventListener("click", event => {
+        const btn = event.target.closest("[data-sleep-hour]");
+        if (!btn) return;
+        sleepTimeDraft.hour = Number(btn.dataset.sleepHour);
+        renderSleepTimeOptions();
+      });
+      byId("sleepMinuteOptions").addEventListener("click", event => {
+        const btn = event.target.closest("[data-sleep-minute]");
+        if (!btn) return;
+        sleepTimeDraft.minute = Number(btn.dataset.sleepMinute);
+        renderSleepTimeOptions();
+      });
+      byId("sleepPeriodOptions").addEventListener("click", event => {
+        const btn = event.target.closest("[data-sleep-period]");
+        if (!btn) return;
+        sleepTimeDraft.period = btn.dataset.sleepPeriod;
+        renderSleepTimeOptions();
+      });
+      byId("saveSleepTimeBtn").addEventListener("click", saveSleepTime);
       byId("sleepPlayVideoBtn").addEventListener("click", playSleepVideo);
       byId("sleepStartBtn").addEventListener("click", startSleep);
       byId("sleepWakeBtn").addEventListener("click", wakeSleep);
+      window.addEventListener("keydown", event => {
+        if (event.key !== "Escape") return;
+        closeFocusTimerModal();
+        closeSleepTimeModal();
+      });
       window.addEventListener("resize", renderSleepDashboard);
       sleepClockInterval = window.setInterval(() => {
         if (sleepState.activeSleep) renderSleepUi();
